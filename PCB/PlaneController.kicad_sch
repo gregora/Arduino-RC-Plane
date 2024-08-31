@@ -1710,6 +1710,12 @@
 		)
 	)
 	(junction
+		(at 107.95 116.84)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "1c9b48ee-f407-4e8f-90fc-aa9fdc467e22")
+	)
+	(junction
 		(at 104.14 101.6)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -1732,6 +1738,12 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "744253f8-1314-466d-bafa-3779a1ba1dbb")
+	)
+	(junction
+		(at 100.33 114.3)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "74898938-9a97-4cca-b4a5-fdb9e6c03049")
 	)
 	(junction
 		(at 97.79 177.8)
@@ -1845,6 +1857,16 @@
 	)
 	(wire
 		(pts
+			(xy 41.91 57.15) (xy 41.91 86.36)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "16111f38-d708-40d7-98ae-6adfcfc1d00d")
+	)
+	(wire
+		(pts
 			(xy 127 142.24) (xy 46.99 142.24)
 		)
 		(stroke
@@ -1935,6 +1957,16 @@
 	)
 	(wire
 		(pts
+			(xy 59.69 86.36) (xy 41.91 86.36)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2f8367a5-855b-4021-978a-32675f64a4fd")
+	)
+	(wire
+		(pts
 			(xy 97.79 153.67) (xy 127 153.67)
 		)
 		(stroke
@@ -1965,6 +1997,16 @@
 	)
 	(wire
 		(pts
+			(xy 59.69 83.82) (xy 44.45 83.82)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "40bf7a3a-3df8-4428-b6a3-117a878e6d37")
+	)
+	(wire
+		(pts
 			(xy 104.14 180.34) (xy 127 180.34)
 		)
 		(stroke
@@ -1985,7 +2027,7 @@
 	)
 	(wire
 		(pts
-			(xy 74.93 54.61) (xy 74.93 72.39)
+			(xy 74.93 57.15) (xy 74.93 72.39)
 		)
 		(stroke
 			(width 0)
@@ -2002,6 +2044,16 @@
 			(type default)
 		)
 		(uuid "511a4a4b-605d-4591-9e6f-491e7d31aef5")
+	)
+	(wire
+		(pts
+			(xy 44.45 57.15) (xy 44.45 83.82)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "55b9533e-b229-4015-8a33-fa7dc08ea281")
 	)
 	(wire
 		(pts
@@ -2042,6 +2094,16 @@
 			(type default)
 		)
 		(uuid "62b473bc-5236-422c-81eb-b35b4f9cc62a")
+	)
+	(wire
+		(pts
+			(xy 100.33 114.3) (xy 153.67 114.3)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "64bad9d4-1ff4-4628-8080-8ea065a5710e")
 	)
 	(wire
 		(pts
@@ -2142,6 +2204,16 @@
 			(type default)
 		)
 		(uuid "7d5b53c5-7a79-4545-9759-1c3218679bec")
+	)
+	(wire
+		(pts
+			(xy 107.95 116.84) (xy 153.67 116.84)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "82422249-a237-43af-a9f4-c57284d80381")
 	)
 	(wire
 		(pts
@@ -2265,7 +2337,7 @@
 	)
 	(wire
 		(pts
-			(xy 77.47 54.61) (xy 77.47 76.2)
+			(xy 77.47 57.15) (xy 77.47 76.2)
 		)
 		(stroke
 			(width 0)
@@ -2383,6 +2455,29 @@
 		)
 		(uuid "fdf49707-224a-44d3-95a3-ef21ca4e1690")
 	)
+	(rectangle
+		(start 106.68 88.9)
+		(end 132.08 111.76)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(uuid 298da35d-7da8-41d5-a24e-cbf5cdbe41cc)
+	)
+	(label "SCL"
+		(at 148.59 119.38 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "0508a258-0d09-42a3-876c-4ed1764df5d0")
+	)
 	(label "5V"
 		(at 78.74 59.69 0)
 		(fields_autoplaced yes)
@@ -2404,6 +2499,39 @@
 			(justify left bottom)
 		)
 		(uuid "9a287eaa-e536-40bf-8be5-0113971cf112")
+	)
+	(label "TX"
+		(at 45.72 59.69 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "b2c05153-17a9-4e1f-b1d4-18c561d7b13f")
+	)
+	(label "RX"
+		(at 38.1 59.69 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "d6004c89-3847-4450-9b78-a1cb514cd5e5")
+	)
+	(label "SDA"
+		(at 148.59 113.03 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "e924386c-4827-4ef0-9c1c-dd12e24f0666")
 	)
 	(symbol
 		(lib_id "Mechanical:MountingHole")
@@ -2544,7 +2672,7 @@
 	)
 	(symbol
 		(lib_id "Connector_Generic:Conn_01x02")
-		(at 74.93 49.53 90)
+		(at 74.93 52.07 90)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -2553,15 +2681,6 @@
 		(fields_autoplaced yes)
 		(uuid "6af054c2-2707-4c81-8999-ef3602dd0eb6")
 		(property "Reference" "J3"
-			(at 80.01 48.2599 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Value" "Conn_01x02"
 			(at 80.01 50.7999 90)
 			(effects
 				(font
@@ -2570,8 +2689,17 @@
 				(justify right)
 			)
 		)
+		(property "Value" "Conn_01x02"
+			(at 80.01 53.3399 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
 		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical"
-			(at 74.93 49.53 0)
+			(at 74.93 52.07 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2580,7 +2708,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 74.93 49.53 0)
+			(at 74.93 52.07 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2589,7 +2717,7 @@
 			)
 		)
 		(property "Description" "Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"
-			(at 74.93 49.53 0)
+			(at 74.93 52.07 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -3263,6 +3391,76 @@
 			(project ""
 				(path "/f475b102-a671-4895-926c-dd521b2271ca"
 					(reference "J1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector_Generic:Conn_01x02")
+		(at 41.91 52.07 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "d3455689-12d8-455c-9c32-593cf02e95bf")
+		(property "Reference" "J4"
+			(at 46.99 50.7999 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "Conn_01x02"
+			(at 46.99 53.3399 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical"
+			(at 41.91 52.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 41.91 52.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Generic connector, single row, 01x02, script generated (kicad-library-utils/schlib/autogen/connector/)"
+			(at 41.91 52.07 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "726f32d6-67aa-46f2-8b53-ac78a016e16a")
+		)
+		(pin "2"
+			(uuid "181dbd37-925c-4879-bfdf-15d41a8488d7")
+		)
+		(instances
+			(project "PlaneController"
+				(path "/f475b102-a671-4895-926c-dd521b2271ca"
+					(reference "J4")
 					(unit 1)
 				)
 			)
