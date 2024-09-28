@@ -4014,7 +4014,7 @@
 		)
 	)
 	(gr_text "5V"
-		(at 115.57 29.15 0)
+		(at 115.824 29.15 0)
 		(layer "F.SilkS")
 		(uuid "690d3388-f473-41ad-b2f7-9b522dcb187f")
 		(effects
@@ -4026,7 +4026,7 @@
 		)
 	)
 	(gr_text "Data"
-		(at 111.76 33.02 0)
+		(at 111.76 29.21 0)
 		(layer "F.SilkS")
 		(uuid "85e3babc-4ead-4200-809d-9716dae3b456")
 		(effects
@@ -4138,11 +4138,11 @@
 		(layer "F.SilkS")
 		(uuid "62b177d4-f40f-4695-9ffc-480659fc9539")
 		(pts
-			(xy 96.52 33.02) (xy 132.08 33.02)
+			(xy 91.44 31.75) (xy 127 31.75)
 		)
 		(height -12.7)
-		(gr_text "35,5600 mm"
-			(at 114.3 19.22 0)
+		(gr_text "35.5600 mm"
+			(at 108.712 18.542 0)
 			(layer "F.SilkS")
 			(uuid "62b177d4-f40f-4695-9ffc-480659fc9539")
 			(effects
@@ -4162,7 +4162,7 @@
 		(style
 			(thickness 0.1)
 			(arrow_length 1.27)
-			(text_position_mode 0)
+			(text_position_mode 2)
 			(extension_height 0.58642)
 			(extension_offset 0.5) keep_text_aligned)
 	)
@@ -4174,7 +4174,7 @@
 			(xy 86.868 114.3) (xy 86.868 27.94)
 		)
 		(height -12.7)
-		(gr_text "86,3600 mm"
+		(gr_text "86.3600 mm"
 			(at 73.068 71.12 90)
 			(layer "F.SilkS")
 			(uuid "9a37f1bb-42af-4f79-a85d-49b393a22a92")
@@ -4207,7 +4207,7 @@
 			(xy 132.08 27.94) (xy 86.36 27.94)
 		)
 		(height 12.7)
-		(gr_text "45,7200 mm"
+		(gr_text "45.7200 mm"
 			(at 109.22 14.14 0)
 			(layer "F.SilkS")
 			(uuid "a37ff332-ae1f-43c4-ad6a-8563a15b2184")
@@ -4240,7 +4240,7 @@
 			(xy 127 33.02) (xy 127 109.22)
 		)
 		(height -10.16)
-		(gr_text "76,2000 mm"
+		(gr_text "76.2000 mm"
 			(at 136.06 71.12 90)
 			(layer "F.SilkS")
 			(uuid "cba1f979-58f0-41f3-96a6-9e393d67c81b")
