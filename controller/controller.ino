@@ -7,6 +7,8 @@
 #include <IBusBM.h>
 #include <SoftwareSerial.h>
 
+#include "Wire.h"
+
 Servo ch1;
 Servo ch2;
 Servo ch3;
@@ -16,18 +18,17 @@ Servo ch5;
 Adafruit_BNO055 bno = Adafruit_BNO055(55);
 IBusBM IBus;    // IBus object
 
-SoftwareSerial receiver(6, 7);
-uint8_t buffer[32];
+int channels[14];
 
 void setup() {
-  Serial.begin(115200);
-  receiver.begin(115200);
+  //Serial.begin(115200);
+  IBus.begin(Serial);
 
   ch1.attach(2);
   ch2.attach(3);
   ch3.attach(4);
   ch4.attach(5);
-  //ch5.attach(6);
+  ch5.attach(6);
 
   if(!bno.begin())
   {
@@ -35,7 +36,9 @@ void setup() {
     //while(1);
   }
 
-
+  Wire.begin(8);                // join i2c bus with address #8
+  Wire.onRequest(requestEvent); // register event
+  
 }
 void loop() {
 
@@ -52,6 +55,7 @@ void loop() {
   float pitch = event.orientation.y;
   float roll = event.orientation.z;
   
+  /*
   Serial.print(yaw, 4);
   Serial.print(" ");
   Serial.print(pitch, 4);
@@ -59,23 +63,29 @@ void loop() {
   Serial.print(roll, 4);
   Serial.println("");
 
+  Serial.print("\n");
+  */
+
 
   ch1.write(pitch + 90);
 
-  Serial.print("\n");
 
-  int val = IBus.readChannel(2);
-  Serial.print(val);
-  Serial.print("\n");
-
-  if(receiver.available()){
-      for(int i = 0; i < 32; i++){
-        Serial.print(" ");
-        Serial.print(receiver.read());
-      }
-      Serial.print("\n");
+  for(int i = 0; i < 14; i++){
+    channels[i] = IBus.readChannel(i);
   }
+
+  //val = 17;
+  //Serial.print(val);
+  //Serial.print("\n");
 
   delay(50);
   
+}
+
+void requestEvent() {
+
+  for(int i = 0; i < 14; i++){
+    Wire.write(highByte(channels[i]));
+    Wire.write(lowByte(channels[i]));
+  }
 }
