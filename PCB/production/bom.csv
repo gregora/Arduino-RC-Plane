@@ -1,0 +1,10 @@
+﻿Designator,Footprint,Quantity,Value,LCSC Part #
+A1,Arduino_Nano,1,Arduino_Nano_Every,
+J1,PinSocket_1x06_P2.54mm_Vertical,1,Conn_01x06_Pin,
+J2,PinSocket_1x04_P2.54mm_Vertical,1,Conn_01x04_Pin,
+J3,PinHeader_1x03_P2.54mm_Vertical,1,Conn_01x03,
+J4,PinSocket_2x04_P2.54mm_Vertical,1,Conn_02x04_Odd_Even,
+J5,PinHeader_1x03_P2.54mm_Vertical,1,GPIO7,
+J6,PinHeader_1x03_P2.54mm_Vertical,1,GPIO8,
+J7,PinHeader_1x03_P2.54mm_Vertical,1,GPIO9,
+"M1, M2, M3, M4, M5",PinHeader_1x03_P2.54mm_Vertical,5,Motor_Servo,
