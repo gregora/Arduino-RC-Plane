@@ -51,7 +51,7 @@ void setup() {
   }
 
   if (ELECHOUSE_cc1101.getCC1101()){        // Check the CC1101 Spi connection.
-    Serial.println("CC1101: Connection OK");
+    //Serial.println("CC1101: Connection OK");
     cc1101_status = true;
   }else{
     //Serial.println("CC1101: Connection ERROR");
