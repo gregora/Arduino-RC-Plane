@@ -2,6 +2,8 @@
 #include <ELECHOUSE_CC1101_SRC_DRV.h>
 
 struct Packet{
+  unsigned long time;
+
   float yaw;
   float pitch;
   float roll;
@@ -17,6 +19,11 @@ struct Packet{
 Packet p;
 
 void printPacket(Packet p){
+
+
+  Serial.print("Time: ");
+  Serial.println(p.time);
+
   Serial.print("Yaw: ");
   Serial.println(p.yaw);
 

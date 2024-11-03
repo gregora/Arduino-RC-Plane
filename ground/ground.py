@@ -55,22 +55,24 @@ while running:
                 packet = packet.replace("\r", "")
                 packet = packet.split("\n")
 
-                if(len(packet) != 10):
+                if(len(packet) != 11):
                     continue # bad packet
 
                 try:
                     rssi = int(packet[0][6:])
                     lqi = int(packet[1][5:])
                     
-                    yaw = float(packet[2][5:])
-                    pitch = float(packet[3][7:])
-                    roll = float(packet[4][6:])
+                    t = int(packet[2][6:])
 
-                    ax = float(packet[5][4:])
-                    ay = float(packet[6][4:])
-                    az = float(packet[7][4:])
+                    yaw = float(packet[3][5:])
+                    pitch = float(packet[4][7:])
+                    roll = float(packet[5][6:])
 
-                    channels = packet[9].split(" ")
+                    ax = float(packet[6][4:])
+                    ay = float(packet[7][4:])
+                    az = float(packet[8][4:])
+
+                    channels = packet[10].split(" ")
 
                     for i, c in enumerate(channels):
                         channels[i] = int(c)
@@ -81,6 +83,7 @@ while running:
                 save_data = {
                     "RSSI": rssi,
                     "LQI": lqi,
+                    "Time": t,
                     "Yaw": yaw,
                     "Pitch": pitch,
                     "Roll": roll,
@@ -102,7 +105,7 @@ while running:
         latest_packet = received_packets[-1]
             
 
-        pygame.draw.rect(screen, (20, 20, 20), (0, 0, width/2 + 50, 250))
+        pygame.draw.rect(screen, (20, 20, 20), (0, 0, width/2 + 50, 260))
 
         font = pygame.font.Font(None, 20)
 
@@ -112,28 +115,35 @@ while running:
         text = font.render("LQI: " + str(latest_packet["LQI"]), True, (255, 255, 255))
         screen.blit(text, (10, 35))
 
-        text = font.render("Yaw: " + str(latest_packet["Yaw"]), True, (255, 255, 255))
+        text = font.render("Time: " + str(latest_packet["Time"]), True, (255, 255, 255))
         screen.blit(text, (10, 60))
 
-        text = font.render("Pitch: " + str(latest_packet["Pitch"]), True, (255, 255, 255))
+        text = font.render("Yaw: " + str(latest_packet["Yaw"]), True, (255, 255, 255))
         screen.blit(text, (10, 85))
 
-        text = font.render("Roll: " + str(latest_packet["Roll"]), True, (255, 255, 255))
+        text = font.render("Pitch: " + str(latest_packet["Pitch"]), True, (255, 255, 255))
         screen.blit(text, (10, 110))
 
-        text = font.render("ax: " + str(latest_packet["ax"]), True, (255, 255, 255))
+        text = font.render("Roll: " + str(latest_packet["Roll"]), True, (255, 255, 255))
         screen.blit(text, (10, 135))
 
-        text = font.render("ay: " + str(latest_packet["ay"]), True, (255, 255, 255))
+        text = font.render("ax: " + str(latest_packet["ax"]), True, (255, 255, 255))
         screen.blit(text, (10, 160))
 
-        text = font.render("az: " + str(latest_packet["az"]), True, (255, 255, 255))
+        text = font.render("ay: " + str(latest_packet["ay"]), True, (255, 255, 255))
         screen.blit(text, (10, 185))
 
+        text = font.render("az: " + str(latest_packet["az"]), True, (255, 255, 255))
+        screen.blit(text, (10, 210))
+
         text = font.render("Channels: " + str(latest_packet["Channels"]), True, (255, 255, 255))
-        screen.blit(text, (10, 210))    
+        screen.blit(text, (10, 235))    
 
 
+        font_big = pygame.font.Font(None, 40)
+
+        text = font_big.render("Elapsed: " + str(round(latest_packet["Time"] / 1000, 1)) + " s", True, (255, 255, 255))
+        screen.blit(text, (10, 270))
 
         # visualize the channels
         for i, c in enumerate(latest_packet["Channels"]):
