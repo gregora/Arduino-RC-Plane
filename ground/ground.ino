@@ -5,8 +5,14 @@ struct Packet{
   float yaw;
   float pitch;
   float roll;
+
+  float ax;
+  float ay;
+  float az;
+
   int channels[14];
 };
+
 
 Packet p;
 
@@ -20,6 +26,15 @@ void printPacket(Packet p){
   Serial.print("Roll: ");
   Serial.println(p.roll);
 
+  Serial.print("ax: ");
+  Serial.println(p.ax);
+
+  Serial.print("ay: ");
+  Serial.println(p.ay);
+
+  Serial.print("az: ");
+  Serial.println(p.az);
+
   Serial.print("Channels: \n");
   for(int i = 0; i < 14; i++){
     Serial.print(p.channels[i]);
@@ -30,7 +45,7 @@ void printPacket(Packet p){
 
 void setup() {
 
-  Serial.begin(9600);  // start serial for output
+  Serial.begin(115200);  // start serial for output
 
   if (ELECHOUSE_cc1101.getCC1101()){        // Check the CC1101 Spi connection.
     Serial.println("CC1101: Connection OK");
@@ -54,14 +69,18 @@ void loop() {
     //When something is received we give some time to receive the message in full.(time in millis)
     if (ELECHOUSE_cc1101.CheckRxFifo(100)){
       if (ELECHOUSE_cc1101.CheckCRC()){    //CRC Check. If "setCrc(false)" crc returns always OK!
-        //Serial.print("Rssi: ");
-        //Serial.println(ELECHOUSE_cc1101.getRssi());
-        //Serial.print("LQI: ");
-        //Serial.println(ELECHOUSE_cc1101.getLqi());
+        
+        Serial.println("GND PACKET");
+        Serial.print("Rssi: ");
+        Serial.println(ELECHOUSE_cc1101.getRssi());
+        Serial.print("LQI: ");
+        Serial.println(ELECHOUSE_cc1101.getLqi());
         
         int len = ELECHOUSE_cc1101.ReceiveData((void*) &p);
 
         printPacket(p);
+
+        Serial.println();
 
       }
     }

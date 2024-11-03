@@ -27,6 +27,11 @@ struct Packet{
   float yaw;
   float pitch;
   float roll;
+
+  float ax;
+  float ay;
+  float az;
+
   int channels[14];
 };
 
@@ -48,6 +53,8 @@ void setup() {
   if(!bno.begin()){
     bno_status = false;
     //Serial.println("BNO055: Connection ERROR");
+  }else {
+    bno_status = true;
   }
 
   if (ELECHOUSE_cc1101.getCC1101()){        // Check the CC1101 Spi connection.
@@ -84,6 +91,13 @@ void loop() {
     p.yaw = event.orientation.x;
     p.pitch = event.orientation.y;
     p.roll = event.orientation.z;
+
+    imu::Vector<3> vector = bno.getVector(Adafruit_BNO055::VECTOR_LINEARACCEL);
+
+    p.ax = vector.x();
+    p.ay = vector.y();
+    p.az = vector.z();
+
   }
 
   // read flysky receiver data
@@ -95,6 +109,5 @@ void loop() {
   if(cc1101_status){
     ELECHOUSE_cc1101.SendData((void*) &p, sizeof(p), 100);
   }
-
-  delay(50);  
+ 
 }
