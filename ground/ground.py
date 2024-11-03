@@ -137,9 +137,9 @@ while running:
 
         # visualize the channels
         for i, c in enumerate(latest_packet["Channels"]):
-            pygame.draw.rect(screen, (255, 255, 255), (width + (i - 14) * 15, 205 - c//10, 10, c // 10))
+            pygame.draw.rect(screen, (255, 255, 255), (width + (i - 14) * 15 - 10, 215 - c//10, 10, c // 10))
             text = font.render(str(i), True, (255, 255, 255))
-            screen.blit(text, (width + (i - 14) * 15, 210))
+            screen.blit(text, (width + (i - 14) * 15 - 10, 220))
 
         # draw artificial horizon
 
