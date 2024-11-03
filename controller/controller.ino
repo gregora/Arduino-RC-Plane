@@ -24,6 +24,8 @@ bool bno_status = false;
 bool cc1101_status = false;
 
 struct Packet{
+  unsigned long time;
+
   float yaw;
   float pitch;
   float roll;
@@ -104,6 +106,8 @@ void loop() {
   for(int i = 0; i < 14; i++){
     p.channels[i] = IBus.readChannel(i);
   }
+
+  p.time = millis();
 
   // send data over radio
   if(cc1101_status){
