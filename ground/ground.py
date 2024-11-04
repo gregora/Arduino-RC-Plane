@@ -233,6 +233,10 @@ def main():
             # draww two vertical lines
             pygame.draw.line(screen, (255, 255, 255), (width//2 + 75, 25), (width//2 + 75, 55), 5)
             pygame.draw.line(screen, (255, 255, 255), (width//2 + 95, 25), (width//2 + 95, 55), 5)
+            # add small text under the button
+            font = pygame.font.Font(None, 18)
+            text = font.render("Recording", True, (255, 255, 255))
+            screen.blit(text, (width//2 + 55, 75))
         else:
             pygame.draw.rect(screen, (40, 40, 40), record_button)
             # draw a triangle
