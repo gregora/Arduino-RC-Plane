@@ -32,6 +32,8 @@ screen = pygame.display.set_mode((width, height))
 
 marker_image = pygame.image.load("marker.png")
 
+last_packet_time = 0
+
 running = True
 
 while running:
@@ -41,7 +43,7 @@ while running:
         try:
             data = ser.read(ser.in_waiting).decode("ASCII")
             uart_data[i] += data
-        except serial.SerialException:
+        except:
             continue
 
         if ("GND PACKET" in uart_data[i]):
@@ -76,6 +78,8 @@ while running:
 
                     for i, c in enumerate(channels):
                         channels[i] = int(c)
+
+                    last_packet_time = time.time()
 
                 except ValueError:
                     continue # bad packet
@@ -186,6 +190,14 @@ while running:
         if(abs(ball_offset) > 40):
             ball_offset = 40 * ball_offset / abs(ball_offset)
         pygame.draw.circle(screen, (20, 20, 20), (width / 2 + ball_offset, height / 2 - 25), 10)
+
+
+    if(time.time() - last_packet_time > 1):
+        # render a red circle
+        pygame.draw.circle(screen, (255, 0, 0), (width/2, 40), 20)
+    else:
+        # render a green circle
+        pygame.draw.circle(screen, (0, 255, 0), (width/2, 40), 20)
 
     pygame.display.flip()
 
