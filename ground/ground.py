@@ -60,6 +60,7 @@ def main():
 
     running = True
 
+    record_button = pygame.Rect(width//2 + 60, 15, 50, 50)
 
     while running:
 
@@ -220,7 +221,6 @@ def main():
                 ball_offset = 40 * ball_offset / abs(ball_offset)
             pygame.draw.circle(screen, (20, 20, 20), (width / 2 + ball_offset, height / 2 - 25), 10)
 
-
         if(time.time() - last_packet_time > 1):
             # render a red circle
             pygame.draw.circle(screen, (255, 0, 0), (width/2, 40), 20)
@@ -228,12 +228,28 @@ def main():
             # render a green circle
             pygame.draw.circle(screen, (0, 255, 0), (width/2, 40), 20)
 
+        if recording:
+            pygame.draw.rect(screen, (20, 20, 20), record_button)
+            # draww two vertical lines
+            pygame.draw.line(screen, (255, 255, 255), (width//2 + 75, 25), (width//2 + 75, 55), 5)
+            pygame.draw.line(screen, (255, 255, 255), (width//2 + 95, 25), (width//2 + 95, 55), 5)
+        else:
+            pygame.draw.rect(screen, (40, 40, 40), record_button)
+            # draw a triangle
+            pygame.draw.polygon(screen, (255, 255, 255), [(width//2 + 75, 30), (width//2 + 75, 50), (width//2 + 95, 40)])
+
         pygame.display.flip()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if record_button.collidepoint(event.pos):
+                    recording = not recording
+            # check if space is pressed
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    recording = not recording
 
     pygame.quit()
 
