@@ -20,11 +20,13 @@ for i in range(14):
 
 saved_packets = pd.DataFrame()
 
+recording = False
 
 def main():
 
     global saved_packets
     global file_name
+    global recording
 
     pygame.init()
     pygame.display.set_caption('Ground Station')
@@ -47,8 +49,6 @@ def main():
 
 
     received_packets = []
-
-    recording = True
 
     width = 1200
     height = 800
@@ -237,9 +237,11 @@ def main():
 
     pygame.quit()
 
-    saved_packets.to_csv(file_name, index=False)
+    if len(saved_packets) > 0:
+        saved_packets.to_csv(file_name, index=False)
 
 try:
     main()
 except KeyboardInterrupt:
-    saved_packets.to_csv(file_name, index=False)
+    if len(saved_packets) > 0:
+        saved_packets.to_csv(file_name, index=False)
