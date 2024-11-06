@@ -20,6 +20,8 @@ Adafruit_BNO055 bno = Adafruit_BNO055(55);
 
 IBusBM IBus;
 
+#define DEBUG false
+
 bool bno_status = false;
 bool cc1101_status = false;
 
@@ -48,22 +50,27 @@ void setup() {
   ch4.attach(5);
   ch5.attach(6);
   
-  //Serial.begin(115200);
+  if(DEBUG){
+    Serial.begin(115200);
+  }
 
   IBus.begin(Serial); // use Serial to read flysky receiver iBUS
 
   if(!bno.begin()){
     bno_status = false;
-    //Serial.println("BNO055: Connection ERROR");
+    if(DEBUG){
+      Serial.println("BNO055: Connection ERROR");
+    }
   }else {
     bno_status = true;
   }
 
   if (ELECHOUSE_cc1101.getCC1101()){        // Check the CC1101 Spi connection.
-    //Serial.println("CC1101: Connection OK");
     cc1101_status = true;
   }else{
-    //Serial.println("CC1101: Connection ERROR");
+    if(DEBUG){
+      Serial.println("CC1101: Connection ERROR");
+    }
   }
 
   ELECHOUSE_cc1101.Init();              // must be set to initialize the cc1101!
@@ -77,6 +84,7 @@ void setup() {
 }
 void loop() {
 
+  unsigned long t1 = millis();
 
   // center the motors
   ch1.write(90);
@@ -84,6 +92,8 @@ void loop() {
   ch3.write(90);
   ch4.write(90);
   ch5.write(90);
+
+  unsigned long t2 = millis();
 
   // read BNO055 attitude data
   if(bno_status){
@@ -102,16 +112,41 @@ void loop() {
 
   }
 
+  unsigned long t3 = millis();
+
   // read flysky receiver data
   for(int i = 0; i < 14; i++){
     p.channels[i] = IBus.readChannel(i);
   }
 
+  unsigned long t4 = millis();
+
   p.time = millis();
 
   // send data over radio
   if(cc1101_status){
-    ELECHOUSE_cc1101.SendData((void*) &p, sizeof(p), 100);
+    ELECHOUSE_cc1101.SendData((void*) &p, sizeof(p), 8);
   }
- 
+
+  unsigned long t5 = millis();
+
+  if(DEBUG){
+    Serial.println("DEBUG: Performance");
+    Serial.print("  Servos: ");
+    Serial.println(t2 - t1);
+
+    Serial.print("  IMU: ");
+    Serial.println(t3 - t2);
+
+    Serial.print("  iBUS: ");
+    Serial.println(t4 - t3);
+
+    Serial.print("  Telemetry: ");
+    Serial.println(t5 - t4);
+
+    Serial.println();
+
+  }
+
+
 }
