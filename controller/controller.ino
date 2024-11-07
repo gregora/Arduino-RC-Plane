@@ -21,6 +21,8 @@ Adafruit_BNO055 bno = Adafruit_BNO055(55);
 IBusBM IBus;
 
 #define DEBUG false
+#define PERFORMANCE false
+#define ANG_VEL false
 
 bool bno_status = false;
 bool cc1101_status = false;
@@ -38,6 +40,11 @@ struct Packet{
 
   int channels[14];
 };
+
+float ang_yaw;
+float ang_pitch;
+float ang_roll;
+
 
 Packet p;
 
@@ -95,21 +102,38 @@ void loop() {
 
   unsigned long t2 = millis();
 
-  // read BNO055 attitude data
   if(bno_status){
+
+    // read BNO055 attitude data
+
     sensors_event_t event;
+    imu::Vector<3> vector;
     bno.getEvent(&event);
 
     p.yaw = event.orientation.x;
     p.pitch = event.orientation.y;
     p.roll = event.orientation.z;
 
-    imu::Vector<3> vector = bno.getVector(Adafruit_BNO055::VECTOR_LINEARACCEL);
+    vector = bno.getVector(Adafruit_BNO055::VECTOR_LINEARACCEL);
 
     p.ax = vector.x();
     p.ay = vector.y();
     p.az = vector.z();
 
+    // read BNO055 angular velocities
+    vector = bno.getVector(Adafruit_BNO055::VECTOR_GYROSCOPE);
+    ang_roll = vector.x();
+    ang_pitch = vector.y();
+    ang_yaw = vector.z();
+
+    if(DEBUG && ANG_VEL){
+      Serial.print(ang_roll);
+      Serial.print(" ");
+      Serial.print(ang_pitch);
+      Serial.print(" ");
+      Serial.print(ang_yaw);
+      Serial.println();
+    }
   }
 
   unsigned long t3 = millis();
@@ -130,7 +154,7 @@ void loop() {
 
   unsigned long t5 = millis();
 
-  if(DEBUG){
+  if(DEBUG && PERFORMANCE){
     Serial.println("DEBUG: Performance");
     Serial.print("  Servos: ");
     Serial.println(t2 - t1);
