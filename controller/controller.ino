@@ -20,9 +20,9 @@ Adafruit_BNO055 bno = Adafruit_BNO055(55);
 
 IBusBM IBus;
 
-#define DEBUG false
+#define DEBUG true
 #define PERFORMANCE false
-#define ANG_VEL false
+#define ANG_VEL true
 
 bool bno_status = false;
 bool cc1101_status = false;
@@ -45,6 +45,13 @@ float ang_yaw;
 float ang_pitch;
 float ang_roll;
 
+/*
+MODES:
+0 - fly-by-wire
+1 - take-off
+2 - stabilization
+*/
+int mode = 1;
 
 Packet p;
 
@@ -136,6 +143,21 @@ void loop() {
     p.channels[i] = IBus.readChannel(i);
   }
 
+  
+  if(mode == 1) {
+    // take-off mode
+    // target 10 deg nose up
+
+    float d1 = 75;
+    float p1 = 80;
+
+    p.channels[1] = 1500 + (p.pitch - 10) * p1 - ang_pitch*d1;
+
+    p.channels[0] = 1500 + p.roll*p1 - ang_roll*d1;
+    p.channels[3] = 1500 + p.roll*p1 - ang_roll*d1;
+  
+  }
+
   // write received values to servos
   ch1.writeMicroseconds(p.channels[0]); // aileron 1
   ch2.writeMicroseconds(p.channels[1]); // horizontal stabilizer
@@ -143,6 +165,7 @@ void loop() {
   ch4.writeMicroseconds(p.channels[3]); // aileron 2
   ch5.writeMicroseconds(p.channels[4]); // vertical stabilizer
 
+  
   unsigned long t3 = millis();
 
   p.time = millis();
