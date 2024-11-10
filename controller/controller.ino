@@ -72,12 +72,13 @@ void setup() {
     bno_status = true;
   }
 
-  if (ELECHOUSE_cc1101.getCC1101()){        // Check the CC1101 Spi connection.
-    cc1101_status = true;
-  }else{
+  if (!ELECHOUSE_cc1101.getCC1101()){        // Check the CC1101 Spi connection.
+    cc1101_status = false;
     if(DEBUG){
       Serial.println("CC1101: Connection ERROR");
     }
+  }else{
+    cc1101_status = true;
   }
 
   ELECHOUSE_cc1101.Init();              // must be set to initialize the cc1101!
@@ -93,14 +94,6 @@ void loop() {
 
   unsigned long t1 = millis();
 
-  // center the motors
-  ch1.write(90);
-  ch2.write(90);
-  ch3.write(90);
-  ch4.write(90);
-  ch5.write(90);
-
-  unsigned long t2 = millis();
 
   if(bno_status){
 
@@ -136,41 +129,44 @@ void loop() {
     }
   }
 
-  unsigned long t3 = millis();
+  unsigned long t2 = millis();
 
   // read flysky receiver data
   for(int i = 0; i < 14; i++){
     p.channels[i] = IBus.readChannel(i);
   }
 
-  unsigned long t4 = millis();
+  // write received values to servos
+  ch1.writeMicroseconds(p.channels[0]); // aileron 1
+  ch2.writeMicroseconds(p.channels[1]); // horizontal stabilizer
+  ch3.writeMicroseconds(p.channels[2]); // throttle
+  ch4.writeMicroseconds(p.channels[3]); // aileron 2
+  ch5.writeMicroseconds(p.channels[4]); // vertical stabilizer
+
+  unsigned long t3 = millis();
 
   p.time = millis();
 
-  // send data over radio
+  // send data over radio (CC1101)
   if(cc1101_status){
     ELECHOUSE_cc1101.SendData((void*) &p, sizeof(p), 8);
   }
 
-  unsigned long t5 = millis();
+  unsigned long t4 = millis();
 
   if(DEBUG && PERFORMANCE){
     Serial.println("DEBUG: Performance");
-    Serial.print("  Servos: ");
-    Serial.println(t2 - t1);
 
     Serial.print("  IMU: ");
-    Serial.println(t3 - t2);
+    Serial.println(t2 - t1);
 
     Serial.print("  iBUS: ");
-    Serial.println(t4 - t3);
+    Serial.println(t3 - t2);
 
     Serial.print("  Telemetry: ");
-    Serial.println(t5 - t4);
+    Serial.println(t4 - t3);
 
     Serial.println();
-
   }
-
 
 }
