@@ -51,7 +51,7 @@ MODES:
 1 - take-off
 2 - fly-by-wire
 */
-int mode = 1;
+int mode = 0;
 
 Packet p;
 
@@ -134,6 +134,8 @@ void loop() {
       Serial.print(ang_yaw);
       Serial.println();
     }
+  } else {
+    mode = 0; // IMU unavailable - default to manual mode
   }
 
   unsigned long t2 = millis();
