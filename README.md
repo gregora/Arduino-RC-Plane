@@ -1,5 +1,5 @@
 # Arduino-RC-Plane
-A simple RC airplane, controlled by Arduino with custom PCB
+An RC airplane, controlled by a custom flight controller based on Arduino Nano.
 
 ## CAD
 
