@@ -20,9 +20,9 @@ Adafruit_BNO055 bno = Adafruit_BNO055(55);
 
 IBusBM IBus;
 
-#define DEBUG true
+#define DEBUG false
 #define PERFORMANCE false
-#define ANG_VEL true
+#define ANG_VEL false
 
 bool bno_status = false;
 bool cc1101_status = false;
@@ -47,9 +47,9 @@ float ang_roll;
 
 /*
 MODES:
-0 - fly-by-wire
+0 - manual
 1 - take-off
-2 - stabilization
+2 - fly-by-wire
 */
 int mode = 1;
 
@@ -146,10 +146,13 @@ void loop() {
   
   if(mode == 1) {
     // take-off mode
-    // target 10 deg nose up
+    // target 10 deg nose up, wings level
 
-    float d1 = 75;
-    float p1 = 80;
+
+    // channels have min of 1000 and max 2000
+
+    float p1 = 500 / 90; // max deflection at 90 deg error
+    float d1 = 500 / (4 * 3.14); // max deflection at 4*pi rad/s angular velocity
 
     p.channels[1] = 1500 + (p.pitch - 10) * p1 - ang_pitch*d1;
 
