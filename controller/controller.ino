@@ -153,38 +153,49 @@ void loop() {
     p.channels[i] = IBus.readChannel(i);
   }
 
-  if(p.channels[13] != 0){
+  // if any channel is 0, iBus is disconnected
+  if(p.channels[13] != 0){ //check only for channel 13
     ibus_status = true;
   } else {
     ibus_status = false;
-    p.mode = 255;
+    p.mode = 255; // iBus is unavailable, enter recovery mode
   }
 
   if(p.mode == 1) {
     // take-off mode
     // target 10 deg nose up, wings level
 
-    float p1 = 500 / 90; // max deflection at 90 deg error
-    float d1 = 500 / (4 * 3.14); // max deflection at 4*pi rad/s angular velocity
+    float p = 500 / 90; // max deflection at 90 deg error
+    float d = 500 / (4 * 3.14); // max deflection at 4*pi rad/s angular velocity
 
-    p.channels[1] = 1500 + (p.pitch - 10) * p1 - ang_pitch*d1;
+    p.channels[1] = 1500 + (p.pitch - 10) * p - ang_pitch*d;
 
-    p.channels[0] = 1500 + p.roll*p1 - ang_roll*d1;
-    p.channels[3] = 1500 + p.roll*p1 - ang_roll*d1;
+    p.channels[0] = 1500 + p.roll*p - ang_roll*d;
+    p.channels[3] = 1500 + p.roll*p - ang_roll*d;
 
-  }else if(p.mode == 255){
+  } else if(p.mode == 2){
+    // fly-by-wire mode
+    // target angular velocities
 
-    
+    float d = 500 / (8 * 3.14); // max deflection is at 8*pi rad/s angular velocity error
+
+    // max desired angular velocity is 2*pi rad/s
+    p.channels[1] = ((p.channels[1] - 1500) * 2*3.14 / 500 - ang_pitch) * d;
+
+    p.channels[0] = ((p.channels[0] - 1500) * 2*3.14 / 500 - ang_roll) * d;
+    p.channels[3] = ((p.channels[3] - 1500) * 2*3.14 / 500 - ang_roll) * d;
+
+  }else if(p.mode == 255){  
     // recovery mode
     // target 10 deg nose down, wings level
 
-    float p1 = 500 / 90; // max deflection at 90 deg error
-    float d1 = 500 / (4 * 3.14); // max deflection at 4*pi rad/s angular velocity
+    float p = 500 / 90; // max deflection at 90 deg error
+    float d = 500 / (4 * 3.14); // max deflection at 4*pi rad/s angular velocity
 
-    p.channels[1] = 1500 + (p.pitch + 10) * p1 - ang_pitch*d1;
+    p.channels[1] = 1500 + (p.pitch + 10) * p - ang_pitch*d;
 
-    p.channels[0] = 1500 + p.roll*p1 - ang_roll*d1;
-    p.channels[3] = 1500 + p.roll*p1 - ang_roll*d1;
+    p.channels[0] = 1500 + p.roll*p - ang_roll*d;
+    p.channels[3] = 1500 + p.roll*p - ang_roll*d;
     
   }
 
@@ -192,7 +203,7 @@ void loop() {
   // channels have min of 1000 and max 2000
 
   for(int i = 0; i < 14; i++){
-    if(p.channels[i] < 0){
+    if(p.channels[i] < 1000){
       p.channels[i] = 1000;
     }
 

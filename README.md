@@ -20,5 +20,5 @@ The controller enables you to choose from a few different modes of flying. A mod
 
 * `Mode 0 - Manual`: Your transmitter outputs are directly linked to the motors.
 * `Mode 1 - Take-off`: The aircraft will maintain a 10 degree pitch-up with wings level.
-* `Mode 2 - Fly-by-wire` - To be implemented: The aircraft will follow the angular velocity, commanded by the transmitter. For example, a full deflection  of right joystick corresponds to `4*pi rad/s` roll rate.
+* `Mode 2 - Fly-by-wire` - The aircraft will follow the angular velocity, commanded by the transmitter. For example, a full deflection  of right joystick corresponds to `2*pi rad/s` roll rate.
 * `Mode 255 - Recovery`: The aircraft will assume -10 degree pitch down and wings level
