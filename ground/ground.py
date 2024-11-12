@@ -18,6 +18,8 @@ columns=["RSSI", "LQI", "Time", "Yaw", "Pitch", "Roll", "ax", "ay", "az"]
 for i in range(14):
     columns.append("Channel_" + str(i))
 
+columns.append("Mode")
+
 saved_packets = pd.DataFrame()
 
 recording = False
@@ -83,7 +85,7 @@ def main():
                     packet = packet.replace("\r", "")
                     packet = packet.split("\n")
 
-                    if(len(packet) != 11):
+                    if(len(packet) != 12):
                         continue # bad packet
 
                     try:
@@ -100,14 +102,18 @@ def main():
                         ay = float(packet[7][4:])
                         az = float(packet[8][4:])
 
+                        packet[10] = packet[10].strip()
                         channels = packet[10].split(" ")
 
                         for i, c in enumerate(channels):
                             channels[i] = int(c)
 
+                        mode = int(packet[11][6:])
+
                         last_packet_time = time.time()
 
-                    except ValueError:
+                    except ValueError as e:
+                        # print(e)
                         continue # bad packet
 
                     save_data = {
@@ -120,7 +126,8 @@ def main():
                         "ax": ax,
                         "ay": ay,
                         "az": az,
-                        "Channels": channels
+                        "Channels": channels,
+                        "Mode": mode
                     }
 
                     received_packets.append(save_data)
@@ -128,6 +135,7 @@ def main():
                     if recording:
                         data = [rssi, lqi, t, yaw, pitch, roll, ax, ay, az]
                         data += channels
+                        data += [mode]
 
                         saved_packets = saved_packets._append(pd.DataFrame([data], columns=columns), ignore_index=True)
 
@@ -139,9 +147,12 @@ def main():
             latest_packet = received_packets[-1]
                 
 
-            pygame.draw.rect(screen, (20, 20, 20), (0, 0, width/2 + 50, 260))
+            pygame.draw.rect(screen, (20, 20, 20), (0, 0, width/2 + 50, 285))
 
             font = pygame.font.Font(None, 20)
+            font_middle = pygame.font.Font(None, 30)
+            font_big = pygame.font.Font(None, 40)
+
 
             text = font.render("RSSI: " + str(latest_packet["RSSI"]), True, (255, 255, 255))
             screen.blit(text, (10, 10))
@@ -171,19 +182,35 @@ def main():
             screen.blit(text, (10, 210))
 
             text = font.render("Channels: " + str(latest_packet["Channels"]), True, (255, 255, 255))
-            screen.blit(text, (10, 235))    
+            screen.blit(text, (10, 235))
+
+            text = font.render("Mode: " + str(latest_packet["Mode"]), True, (255, 255, 255))
+            screen.blit(text, (10, 260))
 
 
-            font_big = pygame.font.Font(None, 40)
 
             text = font_big.render("Elapsed: " + str(round(latest_packet["Time"] / 1000, 1)) + " s", True, (255, 255, 255))
-            screen.blit(text, (10, 270))
+            screen.blit(text, (10, 295))
 
             # visualize the channels
             for i, c in enumerate(latest_packet["Channels"]):
-                pygame.draw.rect(screen, (255, 255, 255), (width + (i - 14) * 15 - 10, 215 - c//10, 10, c // 10))
+                pygame.draw.rect(screen, (255, 255, 255), (width + (i - 14) * 15 - 10, 265 - c//10, 10, c // 10))
                 text = font.render(str(i), True, (255, 255, 255))
-                screen.blit(text, (width + (i - 14) * 15 - 10, 220))
+                screen.blit(text, (width + (i - 14) * 15 - 10, 270))
+
+            # flight mode
+            if latest_packet["Mode"] == 0:
+                text = font_middle.render("Manual mode", True, (255, 255, 255))
+            elif latest_packet["Mode"] == 1:
+                text = font_middle.render("Take-off mode", True, (17, 91, 212))
+            elif latest_packet["Mode"] == 2:
+                text = font_middle.render("Fly-by-wire mode", True, (8, 138, 47))
+            elif latest_packet["Mode"] == 255:
+                text = font_middle.render("Recovery mode", True, (140, 0, 14))
+
+            # get the width of the text
+            text_rect = text.get_rect()
+            screen.blit(text, (width - 115 - text_rect.width / 2, 15))
 
             # draw artificial horizon
 

@@ -25,6 +25,7 @@ IBusBM IBus;
 #define ANG_VEL false
 
 bool bno_status = false;
+bool ibus_status = false;
 bool cc1101_status = false;
 
 struct Packet{
@@ -39,24 +40,31 @@ struct Packet{
   float az;
 
   int channels[14];
+
+
+  /*
+  MODES:
+  0 - manual
+  1 - take-off
+  2 - fly-by-wire
+
+  255 - recovery
+  */
+  byte mode;
+
 };
 
 float ang_yaw;
 float ang_pitch;
 float ang_roll;
 
-/*
-MODES:
-0 - manual
-1 - take-off
-2 - fly-by-wire
-*/
-int mode = 0;
-
 Packet p;
 
 
+
 void setup() {
+  p.mode = 0;
+
   // attach the motors to corresponding pins
   ch1.attach(2);
   ch2.attach(3);
@@ -135,7 +143,7 @@ void loop() {
       Serial.println();
     }
   } else {
-    mode = 0; // IMU unavailable - default to manual mode
+    p.mode = 0; // IMU unavailable - default to manual mode
   }
 
   unsigned long t2 = millis();
@@ -145,13 +153,16 @@ void loop() {
     p.channels[i] = IBus.readChannel(i);
   }
 
-  
-  if(mode == 1) {
+  if(p.channels[13] != 0){
+    ibus_status = true;
+  } else {
+    ibus_status = false;
+    p.mode = 255;
+  }
+
+  if(p.mode == 1) {
     // take-off mode
     // target 10 deg nose up, wings level
-
-
-    // channels have min of 1000 and max 2000
 
     float p1 = 500 / 90; // max deflection at 90 deg error
     float d1 = 500 / (4 * 3.14); // max deflection at 4*pi rad/s angular velocity
@@ -160,7 +171,34 @@ void loop() {
 
     p.channels[0] = 1500 + p.roll*p1 - ang_roll*d1;
     p.channels[3] = 1500 + p.roll*p1 - ang_roll*d1;
-  
+
+  }else if(p.mode == 255){
+
+    
+    // recovery mode
+    // target 10 deg nose down, wings level
+
+    float p1 = 500 / 90; // max deflection at 90 deg error
+    float d1 = 500 / (4 * 3.14); // max deflection at 4*pi rad/s angular velocity
+
+    p.channels[1] = 1500 + (p.pitch + 10) * p1 - ang_pitch*d1;
+
+    p.channels[0] = 1500 + p.roll*p1 - ang_roll*d1;
+    p.channels[3] = 1500 + p.roll*p1 - ang_roll*d1;
+    
+  }
+
+  // limit the travel of servos
+  // channels have min of 1000 and max 2000
+
+  for(int i = 0; i < 14; i++){
+    if(p.channels[i] < 0){
+      p.channels[i] = 1000;
+    }
+
+    if(p.channels[i] > 2000){
+      p.channels[i] = 2000;
+    }
   }
 
   // write received values to servos

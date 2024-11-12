@@ -13,7 +13,20 @@ struct Packet{
   float az;
 
   int channels[14];
+
+
+  /*
+  MODES:
+  0 - manual
+  1 - take-off
+  2 - fly-by-wire
+
+  255 - recovery
+  */
+  byte mode;
+
 };
+
 
 
 Packet p;
@@ -48,6 +61,10 @@ void printPacket(Packet p){
     Serial.print(" ");
   }
   Serial.println();
+
+  Serial.print("Mode: ");
+  Serial.println((int) p.mode);
+
 }
 
 void setup() {
