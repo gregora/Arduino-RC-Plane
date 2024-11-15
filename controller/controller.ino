@@ -119,8 +119,8 @@ void loop() {
     bno.getEvent(&event);
 
     p.yaw = event.orientation.x;
-    p.pitch = event.orientation.y;
-    p.roll = event.orientation.z;
+    p.pitch = -event.orientation.y;
+    p.roll = -event.orientation.z;
 
     vector = bno.getVector(Adafruit_BNO055::VECTOR_LINEARACCEL);
 
@@ -154,8 +154,13 @@ void loop() {
   }
 
   // if any channel is 0, iBus is disconnected
-  if(p.channels[13] != 0){ //check only for channel 13
+  if(p.channels[6] != 0){ //check only for channel 6
     ibus_status = true;
+    if(p.channels[6] == 2000){
+      p.mode = 1;
+    }else{
+      p.mode = 0;
+    }
   } else {
     ibus_status = false;
     p.mode = 255; // iBus is unavailable, enter recovery mode
@@ -165,38 +170,43 @@ void loop() {
     // take-off mode
     // target 10 deg nose up, wings level
 
-    float P = 500 / 90; // max deflection at 90 deg error
-    float D = 500 / (4 * 3.14); // max deflection at 4*pi rad/s angular velocity
+    float P = 1000 / 90; // max deflection at 90 deg error
+    float D = 100 / (4 * 3.14); // max deflection at 4*pi rad/s angular velocity
 
-    p.channels[1] = 1500 + (p.pitch - 10) * P - ang_pitch*D;
+    p.channels[1] = 1500 + (p.pitch - 10) * P + ang_pitch*D;
 
-    p.channels[0] = 1500 + p.roll*P - ang_roll*D;
-    p.channels[3] = 1500 + p.roll*P - ang_roll*D;
+    p.channels[0] = 1500 - p.roll*P - ang_roll*D;
+    p.channels[4] = 1500 - p.roll*P - ang_roll*D;
+
+    p.channels[3] = 1500;
 
   } else if(p.mode == 2){
     // fly-by-wire mode
     // target angular velocities
 
-    float D = 500 / (8 * 3.14); // max deflection is at 8*pi rad/s angular velocity error
+    float D = 100 / (8 * 3.14); // max deflection is at 8*pi rad/s angular velocity error
 
     // max desired angular velocity is 2*pi rad/s
-    p.channels[1] = ((p.channels[1] - 1500) * 2*3.14 / 500 - ang_pitch) * D;
+    p.channels[1] = ((p.channels[1] - 1500) * 2*3.14 / 500 + ang_pitch) * D;
 
     p.channels[0] = ((p.channels[0] - 1500) * 2*3.14 / 500 - ang_roll) * D;
-    p.channels[3] = ((p.channels[3] - 1500) * 2*3.14 / 500 - ang_roll) * D;
+    p.channels[4] = ((p.channels[3] - 1500) * 2*3.14 / 500 - ang_roll) * D;
+
+    p.channels[3] = 1500;
 
   }else if(p.mode == 255){  
     // recovery mode
     // target 10 deg nose down, wings level
 
-    float P = 500 / 90; // max deflection at 90 deg error
-    float D = 500 / (4 * 3.14); // max deflection at 4*pi rad/s angular velocity
+    float P = 1000 / 90; // max deflection at 90 deg error
+    float D = 100 / (4 * 3.14); // max deflection at 4*pi rad/s angular velocity
 
-    p.channels[1] = 1500 + (p.pitch + 10) * P - ang_pitch*D;
+    p.channels[1] = 1500 + (p.pitch + 10) * P + ang_pitch*D;
 
-    p.channels[0] = 1500 + p.roll*P - ang_roll*D;
-    p.channels[3] = 1500 + p.roll*P - ang_roll*D;
-    
+    p.channels[0] = 1500 - p.roll*P - ang_roll*D;
+    p.channels[4] = 1500 - p.roll*P - ang_roll*D;
+
+    p.channels[3] = 1500;
   }
 
   // limit the travel of servos
