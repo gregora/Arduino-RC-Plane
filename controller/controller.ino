@@ -20,9 +20,9 @@ Adafruit_BNO055 bno = Adafruit_BNO055(55);
 
 IBusBM IBus;
 
-#define DEBUG true
+#define DEBUG false
 #define PERFORMANCE false
-#define ANG_VEL false
+#define ANG_VEL true
 
 bool bno_status = false;
 bool ibus_status = false;
