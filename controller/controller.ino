@@ -111,27 +111,27 @@ void loop() {
 
   unsigned long t1 = millis();
 
+
   if(bno_status){
 
     // read BNO055 attitude data
-
     sensors_event_t event;
     imu::Vector<3> vector;
-
+ 
     bno.getEvent(&event);
 
     p.yaw = event.orientation.x;
     p.pitch = -event.orientation.y;
     p.roll = -event.orientation.z;
     
-    
-    
+
     vector = bno.getVector(Adafruit_BNO055::VECTOR_LINEARACCEL);
 
     p.ax = vector.x();
     p.ay = vector.y();
     p.az = vector.z();
-
+    
+    
     // read BNO055 angular velocities
     vector = bno.getVector(Adafruit_BNO055::VECTOR_GYROSCOPE);
     ang_roll = vector.x();
@@ -150,7 +150,6 @@ void loop() {
   } else {
     p.mode = 0; // IMU unavailable - default to manual mode
   }
-
 
   
 
@@ -180,8 +179,8 @@ void loop() {
     // take-off mode
     // target 10 deg nose up, wings level
 
-    float P = 1000 / 90; // max deflection at 90 deg error
-    float D = 100 / (4 * 3.14); // max deflection at 4*pi rad/s angular velocity
+    float P = 2000 / 90; // max deflection at 90 deg error
+    float D = 50 / (4 * 3.14); // max deflection at 4*pi rad/s angular velocity
 
     p.channels[1] = 1500 + (p.pitch - 10) * P + ang_pitch*D;
 
@@ -208,8 +207,8 @@ void loop() {
     // recovery mode
     // target 10 deg nose down, wings level
 
-    float P = 1000 / 90; // max deflection at 90 deg error
-    float D = 100 / (4 * 3.14); // max deflection at 4*pi rad/s angular velocity
+    float P = 2000 / 90; // max deflection at 90 deg error
+    float D = 50 / (4 * 3.14); // max deflection at 4*pi rad/s angular velocity
 
     p.channels[1] = 1500 + (p.pitch + 10) * P + ang_pitch*D;
 
@@ -238,8 +237,8 @@ void loop() {
   ch3.writeMicroseconds(p.channels[2]); // throttle
   ch4.writeMicroseconds(p.channels[3]); // aileron 2
   ch5.writeMicroseconds(p.channels[4]); // vertical stabilizer
-
   
+
   unsigned long t3 = millis();
 
   p.time = millis();
