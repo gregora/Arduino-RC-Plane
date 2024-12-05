@@ -5,8 +5,6 @@
 #include <Servo.h>
 
 #include <IBusBM.h>
-#include <SoftwareSerial.h>
-
 
 #include <ELECHOUSE_CC1101_SRC_DRV.h>
 
@@ -76,7 +74,7 @@ void setup() {
     Serial.begin(115200);
   }
 
-  IBus.begin(Serial); // use Serial to read flysky receiver iBUS
+  IBus.begin(Serial, IBUSBM_NOTIMER); // use Serial to read flysky receiver iBUS
 
   if(!bno.begin()){
     bno_status = false;
@@ -86,6 +84,7 @@ void setup() {
   }else {
     bno_status = true;
   }
+
 
   if (!ELECHOUSE_cc1101.getCC1101()){        // Check the CC1101 Spi connection.
     cc1101_status = false;
@@ -104,11 +103,13 @@ void setup() {
   // ELECHOUSE_cc1101.setPA(10);      // set TxPower. The following settings are possible depending on the frequency band.  (-30  -20  -15  -10  -6    0    5    7    10   11   12) Default is max!
   ELECHOUSE_cc1101.setCrc(1);     // 1 = CRC calculation in TX and CRC check in RX enabled. 0 = CRC disabled for TX and RX.
 
+
 }
+
+
 void loop() {
 
   unsigned long t1 = millis();
-
 
   if(bno_status){
 
@@ -116,12 +117,15 @@ void loop() {
 
     sensors_event_t event;
     imu::Vector<3> vector;
+
     bno.getEvent(&event);
 
     p.yaw = event.orientation.x;
     p.pitch = -event.orientation.y;
     p.roll = -event.orientation.z;
-
+    
+    
+    
     vector = bno.getVector(Adafruit_BNO055::VECTOR_LINEARACCEL);
 
     p.ax = vector.x();
@@ -133,6 +137,7 @@ void loop() {
     ang_roll = vector.x();
     ang_pitch = vector.y();
     ang_yaw = vector.z();
+    
 
     if(DEBUG && ANG_VEL){
       Serial.print(ang_roll);
@@ -146,8 +151,12 @@ void loop() {
     p.mode = 0; // IMU unavailable - default to manual mode
   }
 
+
+  
+
   unsigned long t2 = millis();
 
+  IBus.loop();
   // read flysky receiver data
   for(int i = 0; i < 14; i++){
     p.channels[i] = IBus.readChannel(i);
@@ -165,6 +174,7 @@ void loop() {
     ibus_status = false;
     p.mode = 255; // iBus is unavailable, enter recovery mode
   }
+
 
   if(p.mode == 1) {
     // take-off mode
