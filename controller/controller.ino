@@ -26,6 +26,8 @@ bool bno_status = false;
 bool ibus_status = false;
 bool cc1101_status = false;
 
+unsigned int frame = 0;
+
 struct Packet{
   unsigned long time;
 
@@ -83,6 +85,10 @@ void setup() {
     }
   }else {
     bno_status = true;
+  
+    delay(1000);
+
+    bno.setExtCrystalUse(true);
   }
 
 
@@ -106,37 +112,38 @@ void setup() {
 
 }
 
-
 void loop() {
+
+  frame++;
 
   unsigned long t1 = millis();
 
-
   if(bno_status){
+  
 
     // read BNO055 attitude data
-    sensors_event_t event;
-    imu::Vector<3> vector;
- 
-    bno.getEvent(&event);
+    imu::Vector<3> vector1;
+    vector1 = bno.getVector(Adafruit_BNO055::VECTOR_EULER);
 
-    p.yaw = event.orientation.x;
-    p.pitch = -event.orientation.y;
-    p.roll = -event.orientation.z;
-    
+    p.yaw = vector1.x();
+    p.pitch = -vector1.y();
+    p.roll = -vector1.z();
 
-    vector = bno.getVector(Adafruit_BNO055::VECTOR_LINEARACCEL);
+    // read BNO055 lateral accelerations
+    imu::Vector<3> vector2;
+    vector2 = bno.getVector(Adafruit_BNO055::VECTOR_LINEARACCEL);
 
-    p.ax = vector.x();
-    p.ay = vector.y();
-    p.az = vector.z();
-    
-    
+    p.ax = vector2.x();
+    p.ay = vector2.y();
+    p.az = vector2.z();
+
+
     // read BNO055 angular velocities
-    vector = bno.getVector(Adafruit_BNO055::VECTOR_GYROSCOPE);
-    ang_roll = vector.x();
-    ang_pitch = vector.y();
-    ang_yaw = vector.z();
+    imu::Vector<3> vector3;
+    vector3 = bno.getVector(Adafruit_BNO055::VECTOR_GYROSCOPE);
+    ang_roll = vector3.x();
+    ang_pitch = vector3.y();
+    ang_yaw = vector3.z();
     
 
     if(DEBUG && ANG_VEL){
