@@ -8,11 +8,11 @@
 
 #include <ELECHOUSE_CC1101_SRC_DRV.h>
 
-Servo ch1;
-Servo ch2;
-Servo ch3;
+//Servo ch1;
+//Servo ch2;
+//Servo ch3;
 Servo ch4;
-Servo ch5;
+//Servo ch5;
 
 Adafruit_BNO055 bno = Adafruit_BNO055(55);
 
@@ -66,12 +66,17 @@ void setup() {
   p.mode = 0;
 
   // attach the motors to corresponding pins
-  ch1.attach(2);
-  ch2.attach(3);
-  ch3.attach(4);
-  ch4.attach(5);
-  ch5.attach(6);
-  
+  //ch1.attach(2);
+  //ch2.attach(3);
+  //ch3.attach(4);
+  //ch4.attach(5);
+  //ch5.attach(6);
+
+  pinMode(3, OUTPUT);
+  //pinMode(5, OUTPUT);
+  //pinMode(6, OUTPUT);
+  pinMode(9, OUTPUT);
+
   if(DEBUG){
     Serial.begin(115200);
   }
@@ -238,12 +243,19 @@ void loop() {
     }
   }
 
+
   // write received values to servos
-  ch1.writeMicroseconds(p.channels[0]); // aileron 1
-  ch2.writeMicroseconds(p.channels[1]); // horizontal stabilizer
-  ch3.writeMicroseconds(p.channels[2]); // throttle
-  ch4.writeMicroseconds(p.channels[3]); // aileron 2
-  ch5.writeMicroseconds(p.channels[4]); // vertical stabilizer
+  
+  //ch1.writeMicroseconds(p.channels[0]); // aileron 1
+  //ch2.writeMicroseconds(p.channels[1]); // horizontal stabilizer
+  //ch3.writeMicroseconds(p.channels[2]); // throttle
+  //ch4.writeMicroseconds(p.channels[3]); // vertical stabilizer
+  //ch5.writeMicroseconds(p.channels[4]); // aileron 2
+  
+  
+  analogWrite(3, ((float) p.channels[0])*255.0/2000); // both ailerons
+  analogWrite(9, ((float) p.channels[1])*255.0/2000); // horizontal stabilizer
+
   
 
   unsigned long t3 = millis();
