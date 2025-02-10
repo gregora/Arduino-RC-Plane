@@ -219,8 +219,8 @@ void loop() {
     // recovery mode
     // target 10 deg nose down, wings level
 
-    float P = 2000 / 90; // max deflection at 90 deg error
-    float D = 50 / (4 * 3.14); // max deflection at 4*pi rad/s angular velocity
+    float P = 4.0 / 90         * 500; // max deflection at 90 deg error
+    float D = 0.1 / (4 * 3.14) * 500; // max deflection at 4*pi rad/s angular velocity
 
     p.channels[1] = 1500 + (p.pitch + 10) * P + ang_pitch*D;
 
