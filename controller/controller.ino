@@ -11,16 +11,16 @@
 //Servo ch1;
 //Servo ch2;
 //Servo ch3;
-Servo ch4;
+//Servo ch4;
 //Servo ch5;
 
 Adafruit_BNO055 bno = Adafruit_BNO055(55);
 
 IBusBM IBus;
 
-#define DEBUG false
-#define PERFORMANCE false
-#define ANG_VEL true
+#define DEBUG true
+#define PERFORMANCE true
+#define ANG_VEL false
 
 bool bno_status = false;
 bool ibus_status = false;
@@ -76,6 +76,7 @@ void setup() {
   //pinMode(5, OUTPUT);
   //pinMode(6, OUTPUT);
   pinMode(9, OUTPUT);
+
 
   if(DEBUG){
     Serial.begin(115200);
@@ -247,13 +248,14 @@ void loop() {
   // write received values to servos
   
   //ch1.writeMicroseconds(p.channels[0]); // aileron 1
-  //ch2.writeMicroseconds(p.channels[1]); // horizontal stabilizer
+  //ch2.writeMicroseconds(p.channels[1]); // elevator
   //ch3.writeMicroseconds(p.channels[2]); // throttle
-  //ch4.writeMicroseconds(p.channels[3]); // vertical stabilizer
+  //ch4.writeMicroseconds(p.channels[3]); // rudder
   //ch5.writeMicroseconds(p.channels[4]); // aileron 2
   
   
   analogWrite(3, ((float) p.channels[0])*255.0/2000); // both ailerons
+  //analogWrite(5, ((float) p.channels[3])*255.0/2000); // rudder
   analogWrite(9, ((float) p.channels[1])*255.0/2000); // horizontal stabilizer
 
   
