@@ -19,8 +19,9 @@ Adafruit_BNO055 bno = Adafruit_BNO055(55);
 IBusBM IBus;
 
 #define DEBUG true
-#define PERFORMANCE true
+#define PERFORMANCE false
 #define ANG_VEL false
+#define MAG false
 
 bool bno_status = false;
 bool ibus_status = false;
@@ -151,6 +152,12 @@ void loop() {
     ang_pitch = vector3.y();
     ang_yaw = vector3.z();
     
+    //  read BNO055 magnetometer
+    imu::Vector<3> vector4;
+    vector4 = bno.getVector(Adafruit_BNO055::VECTOR_MAGNETOMETER);
+    float mag_x = vector4.x();
+    float mag_y = vector4.y();
+    float mag_z = vector4.z();
 
     if(DEBUG && ANG_VEL){
       Serial.print(ang_roll);
@@ -160,6 +167,18 @@ void loop() {
       Serial.print(ang_yaw);
       Serial.println();
     }
+
+    if(DEBUG && MAG) {
+      Serial.print(mag_x);
+      Serial.print(" ");
+      Serial.print(mag_y);
+      Serial.print(" ");
+      Serial.print(mag_z);
+      Serial.println();
+      Serial.println(atan2(mag_y, mag_x) * 180 / 3.1415 + 180);
+
+    }
+
   } else {
     p.mode = 0; // IMU unavailable - default to manual mode
   }
