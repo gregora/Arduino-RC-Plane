@@ -8,6 +8,9 @@
 
 #include <ELECHOUSE_CC1101_SRC_DRV.h>
 
+#include <TinyGPS++.h>
+#include <SoftwareSerial.h>
+
 //Servo ch1;
 //Servo ch2;
 //Servo ch3;
@@ -18,10 +21,15 @@ Adafruit_BNO055 bno = Adafruit_BNO055(55);
 
 IBusBM IBus;
 
+TinyGPSPlus gps;
+SoftwareSerial ss(7, 8); // GPS
+
+
 #define DEBUG true
 #define PERFORMANCE false
 #define ANG_VEL false
 #define MAG false
+#define GPS true
 
 bool bno_status = false;
 bool ibus_status = false;
@@ -40,7 +48,12 @@ struct Packet{
   float ay;
   float az;
 
-  int channels[14];
+  float latitude;
+  float longitude;
+  int altitude; // gps altitude in meters
+  byte satellites; // number of satellites
+
+  int channels[10];
 
 
   /*
@@ -107,6 +120,11 @@ void setup() {
   }else{
     cc1101_status = true;
   }
+
+
+  ss.begin(9600);
+
+
 
   ELECHOUSE_cc1101.Init();              // must be set to initialize the cc1101!
   ELECHOUSE_cc1101.setCCMode(1);       // set config for internal transmission mode.
@@ -183,13 +201,37 @@ void loop() {
     p.mode = 0; // IMU unavailable - default to manual mode
   }
 
-  
 
   unsigned long t2 = millis();
 
+  while (ss.available() > 0){
+    gps.encode(ss.read());
+  }
+
+  if (DEBUG && GPS){
+
+    p.latitude = gps.location.lat();
+    p.longitude = gps.location.lng();
+    p.altitude = gps.altitude.meters();
+
+    p.satellites = gps.satellites.value();
+
+    Serial.print("Latitude= "); 
+    Serial.print(p.latitude, 6);
+    Serial.print(" Longitude= "); 
+    Serial.print(p.longitude, 6);
+    Serial.print(" Altitude= ");
+    Serial.print((float) p.altitude, 0);
+    Serial.print(" Satellites= ");
+    Serial.println(p.satellites);
+  }
+
+
+  unsigned long t3 = millis();
+
   IBus.loop();
   // read flysky receiver data
-  for(int i = 0; i < 14; i++){
+  for(int i = 0; i < 10; i++){
     p.channels[i] = IBus.readChannel(i);
   }
 
@@ -253,7 +295,7 @@ void loop() {
   // limit the travel of servos
   // channels have min of 1000 and max 2000
 
-  for(int i = 0; i < 14; i++){
+  for(int i = 0; i < 10; i++){
     if(p.channels[i] < 1000){
       p.channels[i] = 1000;
     }
@@ -279,16 +321,16 @@ void loop() {
 
   
 
-  unsigned long t3 = millis();
+  unsigned long t4 = millis();
 
   p.time = millis();
 
   // send data over radio (CC1101)
   if(cc1101_status){
-    ELECHOUSE_cc1101.SendData((void*) &p, sizeof(p), 8);
+    ELECHOUSE_cc1101.SendData((void*) &p, sizeof(p), 15);
   }
 
-  unsigned long t4 = millis();
+  unsigned long t5 = millis();
 
   if(DEBUG && PERFORMANCE){
     Serial.println("DEBUG: Performance");
@@ -296,11 +338,15 @@ void loop() {
     Serial.print("  IMU: ");
     Serial.println(t2 - t1);
 
-    Serial.print("  iBUS: ");
+    Serial.print("  GPS: ");
     Serial.println(t3 - t2);
 
-    Serial.print("  Telemetry: ");
+
+    Serial.print("  iBUS: ");
     Serial.println(t4 - t3);
+
+    Serial.print("  Telemetry: ");
+    Serial.println(t5 - t4);
 
     Serial.println();
   }

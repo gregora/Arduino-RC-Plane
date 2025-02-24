@@ -13,9 +13,9 @@ dt_string = now.strftime("%Y_%m_%d_%H:%M")
 file_name = "flights/" + dt_string + ".csv"
 print("Saving data to: ", file_name)
 
-columns=["RSSI", "LQI", "Time", "Yaw", "Pitch", "Roll", "ax", "ay", "az"]
+columns=["RSSI", "LQI", "Time", "Yaw", "Pitch", "Roll", "ax", "ay", "az", "Latitude", "Longitude", "Altitude", "Satellites"]
 
-for i in range(14):
+for i in range(10):
     columns.append("Channel_" + str(i))
 
 columns.append("Mode")
@@ -85,7 +85,7 @@ def main():
                     packet = packet.replace("\r", "")
                     packet = packet.split("\n")
 
-                    if(len(packet) != 12):
+                    if(len(packet) != 16):
                         continue # bad packet
 
                     try:
@@ -102,18 +102,23 @@ def main():
                         ay = float(packet[7][4:])
                         az = float(packet[8][4:])
 
-                        packet[10] = packet[10].strip()
-                        channels = packet[10].split(" ")
+                        latitude = float(packet[9][9:])
+                        longitude = float(packet[10][10:])
+                        altitude = float(packet[11][9:])
+                        satellites = int(packet[12][12:])
+                        
+                        packet[14] = packet[14].strip()
+                        channels = packet[14].split(" ")
 
                         for i, c in enumerate(channels):
                             channels[i] = int(c)
 
-                        mode = int(packet[11][6:])
+                        mode = int(packet[15][6:])
 
                         last_packet_time = time.time()
 
                     except ValueError as e:
-                        # print(e)
+                        print(e)
                         continue # bad packet
 
                     save_data = {
@@ -126,6 +131,10 @@ def main():
                         "ax": ax,
                         "ay": ay,
                         "az": az,
+                        "Latitude": latitude,
+                        "Longitude": longitude,
+                        "Altitude": altitude,
+                        "Satellites": satellites,
                         "Channels": channels,
                         "Mode": mode
                     }
@@ -147,7 +156,7 @@ def main():
             latest_packet = received_packets[-1]
                 
 
-            pygame.draw.rect(screen, (20, 20, 20), (0, 0, width/2 + 50, 285))
+            pygame.draw.rect(screen, (20, 20, 20), (0, 0, width/2 + 50, 380))
 
             font = pygame.font.Font(None, 20)
             font_middle = pygame.font.Font(None, 30)
@@ -181,16 +190,28 @@ def main():
             text = font.render("az: " + str(latest_packet["az"]), True, (255, 255, 255))
             screen.blit(text, (10, 210))
 
-            text = font.render("Channels: " + str(latest_packet["Channels"]), True, (255, 255, 255))
+            text = font.render("Latitude: " + str(latest_packet["Latitude"]), True, (255, 255, 255))
             screen.blit(text, (10, 235))
 
-            text = font.render("Mode: " + str(latest_packet["Mode"]), True, (255, 255, 255))
+            text = font.render("Longitude: " + str(latest_packet["Longitude"]), True, (255, 255, 255))
             screen.blit(text, (10, 260))
+
+            text = font.render("Altitude: " + str(latest_packet["Altitude"]), True, (255, 255, 255))
+            screen.blit(text, (10, 285))
+
+            text = font.render("Satellites: " + str(latest_packet["Satellites"]), True, (255, 255, 255))
+            screen.blit(text, (10, 310))
+
+            text = font.render("Channels: " + str(latest_packet["Channels"]), True, (255, 255, 255))
+            screen.blit(text, (10, 335))
+
+            text = font.render("Mode: " + str(latest_packet["Mode"]), True, (255, 255, 255))
+            screen.blit(text, (10, 360))
 
 
 
             text = font_big.render("Elapsed: " + str(round(latest_packet["Time"] / 1000, 1)) + " s", True, (255, 255, 255))
-            screen.blit(text, (10, 295))
+            screen.blit(text, (10, 385))
 
             # visualize the channels
             for i, c in enumerate(latest_packet["Channels"]):

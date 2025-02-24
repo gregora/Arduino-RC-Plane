@@ -12,7 +12,12 @@ struct Packet{
   float ay;
   float az;
 
-  int channels[14];
+  float latitude;
+  float longitude;
+  int altitude; // gps altitude in meters
+  byte satellites; // number of satellites
+
+  int channels[10];
 
 
   /*
@@ -55,8 +60,20 @@ void printPacket(Packet p){
   Serial.print("az: ");
   Serial.println(p.az);
 
+  Serial.print("Latitude: ");
+  Serial.println(p.latitude, 10);
+
+  Serial.print("Longitude: ");
+  Serial.println(p.longitude, 10);
+
+  Serial.print("Altitude: ");
+  Serial.println((float) p.altitude, 3);
+
+  Serial.print("Satellites: ");
+  Serial.println(p.satellites);
+  
   Serial.print("Channels: \n");
-  for(int i = 0; i < 14; i++){
+  for(int i = 0; i < 10; i++){
     Serial.print(p.channels[i]);
     Serial.print(" ");
   }
@@ -91,7 +108,7 @@ void setup() {
 void loop() {
     //Checks whether something has been received.
     //When something is received we give some time to receive the message in full.(time in millis)
-    if (ELECHOUSE_cc1101.CheckRxFifo(10)){
+    if (ELECHOUSE_cc1101.CheckRxFifo(15)){
       if (ELECHOUSE_cc1101.CheckCRC()){    //CRC Check. If "setCrc(false)" crc returns always OK!
         
         Serial.println("GND PACKET");
