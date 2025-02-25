@@ -150,7 +150,23 @@ void setup() {
   for(unsigned int i = 0; i < sizeof(UBLOX_INIT); i++) {                        
     ss.write(UBLOX_INIT[i]); // 5Hz refresh rate
   }
+
+
+  // change baudrate to 19200
+  ss.write("$PUBX,41,1,0007,0003,19200,0*25\r\n");
+  ss.flush();
+  ss.end();
+
+  delay(500);
+
+  ss.begin(19200);
+
+
+
+
   
+
+
 
   ELECHOUSE_cc1101.Init();              // must be set to initialize the cc1101!
   ELECHOUSE_cc1101.setCCMode(1);       // set config for internal transmission mode.
@@ -162,6 +178,7 @@ void setup() {
 
 
 }
+
 
 void loop() {
 
