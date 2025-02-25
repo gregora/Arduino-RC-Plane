@@ -108,7 +108,7 @@ void setup() {
 void loop() {
     //Checks whether something has been received.
     //When something is received we give some time to receive the message in full.(time in millis)
-    if (ELECHOUSE_cc1101.CheckRxFifo(15)){
+    if (ELECHOUSE_cc1101.CheckRxFifo(8)){
       if (ELECHOUSE_cc1101.CheckCRC()){    //CRC Check. If "setCrc(false)" crc returns always OK!
         
         Serial.println("GND PACKET");
