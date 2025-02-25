@@ -54,7 +54,7 @@ def main():
 
     width = 1200
     height = 800
-    screen = pygame.display.set_mode((width, height))
+    screen = pygame.display.set_mode((width, height), pygame.RESIZABLE)
 
     marker_image = pygame.image.load("marker.png")
 
@@ -62,9 +62,11 @@ def main():
 
     running = True
 
-    record_button = pygame.Rect(width//2 + 60, 15, 50, 50)
 
     while running:
+
+        record_button = pygame.Rect(width//2 + 60, 15, 50, 50)
+
 
         for i, ser in enumerate(uart_ports):
             # read data from the uart port
@@ -77,7 +79,7 @@ def main():
             if ("GND PACKET" in uart_data[i]):
                 packets = uart_data[i].split("GND PACKET")
 
-                uart_data[i] = packets[-1]
+                uart_data[i] = "GND PACKET" + packets[-1]
 
                 for packet in packets[:-1]:
                     
@@ -142,7 +144,7 @@ def main():
                     received_packets.append(save_data)
 
                     if recording:
-                        data = [rssi, lqi, t, yaw, pitch, roll, ax, ay, az]
+                        data = [rssi, lqi, t, yaw, pitch, roll, ax, ay, az, latitude, longitude, altitude, satellites]
                         data += channels
                         data += [mode]
 
@@ -156,12 +158,13 @@ def main():
             latest_packet = received_packets[-1]
                 
 
-            pygame.draw.rect(screen, (20, 20, 20), (0, 0, width/2 + 50, 380))
+            pygame.draw.rect(screen, (20, 20, 20), (0, 0, width/2 + 50, 275))
 
             font = pygame.font.Font(None, 20)
             font_middle = pygame.font.Font(None, 30)
             font_big = pygame.font.Font(None, 40)
 
+            # left side
 
             text = font.render("RSSI: " + str(latest_packet["RSSI"]), True, (255, 255, 255))
             screen.blit(text, (10, 10))
@@ -169,8 +172,6 @@ def main():
             text = font.render("LQI: " + str(latest_packet["LQI"]), True, (255, 255, 255))
             screen.blit(text, (10, 35))
 
-            text = font.render("Time: " + str(latest_packet["Time"]), True, (255, 255, 255))
-            screen.blit(text, (10, 60))
 
             text = font.render("Yaw: " + str(latest_packet["Yaw"]), True, (255, 255, 255))
             screen.blit(text, (10, 85))
@@ -190,28 +191,36 @@ def main():
             text = font.render("az: " + str(latest_packet["az"]), True, (255, 255, 255))
             screen.blit(text, (10, 210))
 
-            text = font.render("Latitude: " + str(latest_packet["Latitude"]), True, (255, 255, 255))
-            screen.blit(text, (10, 235))
-
-            text = font.render("Longitude: " + str(latest_packet["Longitude"]), True, (255, 255, 255))
-            screen.blit(text, (10, 260))
-
-            text = font.render("Altitude: " + str(latest_packet["Altitude"]), True, (255, 255, 255))
-            screen.blit(text, (10, 285))
-
-            text = font.render("Satellites: " + str(latest_packet["Satellites"]), True, (255, 255, 255))
-            screen.blit(text, (10, 310))
 
             text = font.render("Channels: " + str(latest_packet["Channels"]), True, (255, 255, 255))
-            screen.blit(text, (10, 335))
+            screen.blit(text, (10, 240))
+
+
+
+            # right side
+
+            text = font.render("Time: " + str(latest_packet["Time"]), True, (255, 255, 255))
+            screen.blit(text, (200, 10))
 
             text = font.render("Mode: " + str(latest_packet["Mode"]), True, (255, 255, 255))
-            screen.blit(text, (10, 360))
+            screen.blit(text, (200, 35))
+
+            text = font.render("Latitude: " + str(latest_packet["Latitude"]), True, (255, 255, 255))
+            screen.blit(text, (200, 85))
+
+            text = font.render("Longitude: " + str(latest_packet["Longitude"]), True, (255, 255, 255))
+            screen.blit(text, (200, 110))
+
+            text = font.render("Altitude: " + str(latest_packet["Altitude"]), True, (255, 255, 255))
+            screen.blit(text, (200, 135))
+
+            text = font.render("Satellites: " + str(latest_packet["Satellites"]), True, (255, 255, 255))
+            screen.blit(text, (200, 160))
 
 
 
             text = font_big.render("Elapsed: " + str(round(latest_packet["Time"] / 1000, 1)) + " s", True, (255, 255, 255))
-            screen.blit(text, (10, 385))
+            screen.blit(text, (10, 285))
 
             # visualize the channels
             for i, c in enumerate(latest_packet["Channels"]):
@@ -303,13 +312,21 @@ def main():
                 if event.key == pygame.K_SPACE:
                     recording = not recording
 
+        width, height = screen.get_size()
+
     pygame.quit()
 
     if len(saved_packets) > 0:
-        saved_packets.to_csv(file_name, index=False)
+        try:
+            saved_packets.to_csv(file_name, index=False)
+        except:
+            saved_packets.to_csv(file_name.replace("flights/", ""), index=False)
 
 try:
     main()
 except KeyboardInterrupt:
     if len(saved_packets) > 0:
-        saved_packets.to_csv(file_name, index=False)
+        try:
+            saved_packets.to_csv(file_name, index=False)
+        except:
+            saved_packets.to_csv(file_name.replace("flights/", ""), index=False)

@@ -25,8 +25,8 @@ TinyGPSPlus gps;
 SoftwareSerial ss(7, 8); // GPS
 
 
-#define DEBUG false
-#define PERFORMANCE false
+#define DEBUG true
+#define PERFORMANCE true
 #define ANG_VEL false
 #define MAG false
 #define GPS false
