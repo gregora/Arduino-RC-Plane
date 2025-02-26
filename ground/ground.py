@@ -242,7 +242,10 @@ def main():
             text_rect = text.get_rect()
             screen.blit(text, (width - 115 - text_rect.width / 2, 15))
 
-            # draw artificial horizon
+
+
+
+            ### Artificial horizon ###
 
             pitch_frac = latest_packet["Pitch"] / 60
 
@@ -277,6 +280,39 @@ def main():
             if(abs(ball_offset) > 40):
                 ball_offset = 40 * ball_offset / abs(ball_offset)
             pygame.draw.circle(screen, (20, 20, 20), (width / 2 + ball_offset, height / 2 - 25), 10)
+
+
+
+            ### Minimap ###
+
+            # render position
+            pygame.draw.rect(screen, (20, 20, 20), (10, height / 2 - 30, 370, 370))
+
+            # get average position
+            if len(received_packets) > 1:
+                avg_pos = np.array([0.0, 0.0])
+                for i in range(0, len(received_packets[-10000:-1])):
+                    # check if data is valid
+                    if received_packets[i]["Latitude"] == 0.0 and received_packets[i]["Longitude"] == 0.0:
+                        continue
+
+                    avg_pos += np.array([received_packets[i]["Latitude"], received_packets[i]["Longitude"]])
+                avg_pos /= len(received_packets)
+
+                # render marker
+                pygame.draw.circle(screen, (255, 0, 0), (int(10 + 370/2 + 370 * (latest_packet["Longitude"] - avg_pos[1]) / 0.0001), int(height / 2 - 30 + 370/2 + 370 * (latest_packet["Latitude"] - avg_pos[0]) / 0.0001)), 5)
+
+                # render last 10000 points and connect them with a line
+                for i in range(0, len(received_packets[-10000:-2])):
+                    # check if data is valid
+                    if received_packets[i]["Latitude"] == 0.0 and received_packets[i]["Longitude"] == 0.0:
+                        continue
+
+                    pygame.draw.line(screen, (255, 255, 255), (int(10 + 370/2 + 370 * (received_packets[i]["Longitude"] - avg_pos[1]) / 0.0001), int(height / 2 - 30 + 370/2 + 370 * (received_packets[i]["Latitude"] - avg_pos[0]) / 0.0001)), (int(10 + 370/2 + 370 * (received_packets[i + 1]["Longitude"] - avg_pos[1]) / 0.0001), int(height / 2 - 30 + 370/2 + 370 * (received_packets[i + 1]["Latitude"] - avg_pos[0]) / 0.0001)), 1)
+                
+
+
+
 
         if(time.time() - last_packet_time > 1):
             # render a red circle
