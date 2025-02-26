@@ -288,27 +288,32 @@ def main():
             # render position
             pygame.draw.rect(screen, (20, 20, 20), (10, height / 2 - 30, 370, 370))
 
+            line = []
+
             # get average position
             if len(received_packets) > 1:
                 avg_pos = np.array([0.0, 0.0])
-                for i in range(0, len(received_packets[-10000:-1])):
+                for p in received_packets[-10000::5]:
                     # check if data is valid
-                    if received_packets[i]["Latitude"] == 0.0 and received_packets[i]["Longitude"] == 0.0:
+                    if p["Latitude"] <= 0.1 and p["Longitude"] <= 0.1:
                         continue
 
-                    avg_pos += np.array([received_packets[i]["Latitude"], received_packets[i]["Longitude"]])
-                avg_pos /= len(received_packets)
+                    avg_pos += np.array([p["Latitude"], p["Longitude"]])
+                    line.append([p["Longitude"], p["Latitude"]])
+                avg_pos /= len(received_packets[-10000::5])
+                #print(avg_pos)
+
+                map_scale = 40075 / 360  # full width at 1 km
+
+                for l in line:
+                    l[0] = int(10 + 370/2 + 370 * (l[0] - avg_pos[1]) * map_scale)
+                    l[1] = int(height / 2 - 30 + 370/2 - 370 * (l[1] - avg_pos[0]) * map_scale)
+
+                if len(line) > 2:
+                    pygame.draw.lines(screen, (255, 255, 255), False, line, 1)
 
                 # render marker
-                pygame.draw.circle(screen, (255, 0, 0), (int(10 + 370/2 + 370 * (latest_packet["Longitude"] - avg_pos[1]) / 0.0001), int(height / 2 - 30 + 370/2 + 370 * (latest_packet["Latitude"] - avg_pos[0]) / 0.0001)), 5)
-
-                # render last 10000 points and connect them with a line
-                for i in range(0, len(received_packets[-10000:-2])):
-                    # check if data is valid
-                    if received_packets[i]["Latitude"] == 0.0 and received_packets[i]["Longitude"] == 0.0:
-                        continue
-
-                    pygame.draw.line(screen, (255, 255, 255), (int(10 + 370/2 + 370 * (received_packets[i]["Longitude"] - avg_pos[1]) / 0.0001), int(height / 2 - 30 + 370/2 + 370 * (received_packets[i]["Latitude"] - avg_pos[0]) / 0.0001)), (int(10 + 370/2 + 370 * (received_packets[i + 1]["Longitude"] - avg_pos[1]) / 0.0001), int(height / 2 - 30 + 370/2 + 370 * (received_packets[i + 1]["Latitude"] - avg_pos[0]) / 0.0001)), 1)
+                pygame.draw.circle(screen, (255, 0, 0), (int(10 + 370/2 + 370 * (latest_packet["Longitude"] - avg_pos[1]) * map_scale), int(height / 2 - 30 + 370/2 - 370 * (latest_packet["Latitude"] - avg_pos[0]) * map_scale)), 3)
                 
 
 
