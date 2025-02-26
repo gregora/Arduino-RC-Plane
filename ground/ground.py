@@ -24,6 +24,8 @@ saved_packets = pd.DataFrame()
 
 recording = False
 
+hide_location = False   # dont show the location on UI
+
 def main():
 
     global saved_packets
@@ -205,11 +207,13 @@ def main():
             text = font.render("Mode: " + str(latest_packet["Mode"]), True, (255, 255, 255))
             screen.blit(text, (200, 35))
 
-            text = font.render("Latitude: " + str(latest_packet["Latitude"]), True, (255, 255, 255))
-            screen.blit(text, (200, 85))
+            if not hide_location:
 
-            text = font.render("Longitude: " + str(latest_packet["Longitude"]), True, (255, 255, 255))
-            screen.blit(text, (200, 110))
+                text = font.render("Latitude: " + str(latest_packet["Latitude"]), True, (255, 255, 255))
+                screen.blit(text, (200, 85))
+
+                text = font.render("Longitude: " + str(latest_packet["Longitude"]), True, (255, 255, 255))
+                screen.blit(text, (200, 110))
 
             text = font.render("Altitude: " + str(latest_packet["Altitude"]), True, (255, 255, 255))
             screen.blit(text, (200, 135))
