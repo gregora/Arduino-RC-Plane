@@ -22,3 +22,9 @@ The controller enables you to choose from a few different modes of flying. A mod
 * `Mode 1 - Take-off`: The aircraft will maintain a 10 degree pitch-up with wings level.
 * `Mode 2 - Fly-by-wire` - The aircraft will follow the angular velocity, commanded by the transmitter. For example, a full deflection  of right joystick corresponds to `2*pi rad/s` roll rate.
 * `Mode 255 - Recovery`: The aircraft will assume -10 degree pitch down and wings level
+
+## Ground UI
+
+UI for ground control was also written in Python. The UI includes all the necessary information about the flight and enables saving the flight data to a csv file.
+
+![Ground UI](media/UI.png)
