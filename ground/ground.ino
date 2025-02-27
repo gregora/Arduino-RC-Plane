@@ -43,22 +43,24 @@ void printPacket(Packet p){
   Serial.println(p.time);
 
   Serial.print("Yaw: ");
-  Serial.println(p.yaw);
+  Serial.println(p.yaw, 4);
 
   Serial.print("Pitch: ");
-  Serial.println(p.pitch);
+  Serial.println(p.pitch, 4);
 
   Serial.print("Roll: ");
-  Serial.println(p.roll);
+  Serial.println(p.roll, 4);
 
+
+  // max precision for acceleration is 2 decimals
   Serial.print("ax: ");
-  Serial.println(p.ax);
+  Serial.println(p.ax, 2);
 
   Serial.print("ay: ");
-  Serial.println(p.ay);
+  Serial.println(p.ay, 2);
 
   Serial.print("az: ");
-  Serial.println(p.az);
+  Serial.println(p.az, 2);
 
   Serial.print("Latitude: ");
   Serial.println(p.latitude, 10);
