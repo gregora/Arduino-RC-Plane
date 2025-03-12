@@ -25,8 +25,8 @@ TinyGPSPlus gps;
 SoftwareSerial ss(7, 8); // GPS
 
 
-#define DEBUG true
-#define PERFORMANCE true
+#define DEBUG false
+#define PERFORMANCE false
 #define ANG_VEL false
 #define MAG false
 #define GPS false
@@ -193,9 +193,11 @@ void loop() {
     imu::Vector<3> vector1;
     vector1 = bno.getVector(Adafruit_BNO055::VECTOR_EULER);
 
-    p.yaw = vector1.x();
-    p.pitch = -vector1.y();
-    p.roll = -vector1.z();
+    imu::Quaternion quat = bno.getQuat();
+    vector1 = quat.toEuler();
+    p.yaw   = vector1.x() * 180 / 3.1415;
+    p.pitch = vector1.y() * 180 / 3.1415;
+    p.roll  = vector1.z() * 180 / 3.1415;
 
     // read BNO055 lateral accelerations
     imu::Vector<3> vector2;
