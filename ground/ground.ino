@@ -1,12 +1,16 @@
 #include <Wire.h>
+
+#include <Adafruit_Sensor.h>
+
+#include <Adafruit_BNO055.h>
+
 #include <ELECHOUSE_CC1101_SRC_DRV.h>
+
 
 struct Packet{
   unsigned long time;
 
-  float yaw;
-  float pitch;
-  float roll;
+  imu::Quaternion quat; // orientation quaternion
 
   float ax;
   float ay;
@@ -17,7 +21,7 @@ struct Packet{
   int altitude; // gps altitude in meters
   byte satellites; // number of satellites
 
-  int channels[10];
+  int channels[7];
 
 
   /*
@@ -32,25 +36,45 @@ struct Packet{
 
 };
 
+float yaw;
+float pitch;
+float roll;
 
 
 Packet p;
 
 void printPacket(Packet p){
 
+  imu::Vector<3> euler;
+  euler = p.quat.toEuler();
+
+  yaw   = euler.x() * 180 / 3.1415;
+  pitch = euler.y() * 180 / 3.1415;
+  roll  = euler.z() * 180 / 3.1415;
 
   Serial.print("Time: ");
   Serial.println(p.time);
 
   Serial.print("Yaw: ");
-  Serial.println(p.yaw, 4);
+  Serial.println(yaw, 4);
 
   Serial.print("Pitch: ");
-  Serial.println(p.pitch, 4);
+  Serial.println(pitch, 4);
 
   Serial.print("Roll: ");
-  Serial.println(p.roll, 4);
+  Serial.println(roll, 4);
 
+  Serial.print("q1: ");
+  Serial.println(p.quat.w(), 10);
+
+  Serial.print("q2: ");
+  Serial.println(p.quat.x(), 10);
+
+  Serial.print("q3: ");
+  Serial.println(p.quat.y(), 10);
+
+  Serial.print("q4: ");
+  Serial.println(p.quat.z(), 10);
 
   // max precision for acceleration is 2 decimals
   Serial.print("ax: ");
@@ -75,7 +99,7 @@ void printPacket(Packet p){
   Serial.println(p.satellites);
   
   Serial.print("Channels: \n");
-  for(int i = 0; i < 10; i++){
+  for(int i = 0; i < 7; i++){
     Serial.print(p.channels[i]);
     Serial.print(" ");
   }

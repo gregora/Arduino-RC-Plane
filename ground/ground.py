@@ -13,9 +13,9 @@ dt_string = now.strftime("%Y_%m_%d_%H:%M")
 file_name = "flights/" + dt_string + ".csv"
 print("Saving data to: ", file_name)
 
-columns=["RSSI", "LQI", "Time", "Yaw", "Pitch", "Roll", "ax", "ay", "az", "Latitude", "Longitude", "Altitude", "Satellites"]
+columns=["RSSI", "LQI", "Time", "Yaw", "Pitch", "Roll", "q1", "q2", "q3", "q4", "ax", "ay", "az", "Latitude", "Longitude", "Altitude", "Satellites"]
 
-for i in range(10):
+for i in range(7):
     columns.append("Channel_" + str(i))
 
 columns.append("Mode")
@@ -89,7 +89,8 @@ def main():
                     packet = packet.replace("\r", "")
                     packet = packet.split("\n")
 
-                    if(len(packet) != 16):
+
+                    if(len(packet) != 20):
                         continue # bad packet
 
                     try:
@@ -102,22 +103,27 @@ def main():
                         pitch = float(packet[4][7:])
                         roll = float(packet[5][6:])
 
-                        ax = float(packet[6][4:])
-                        ay = float(packet[7][4:])
-                        az = float(packet[8][4:])
+                        q1 = float(packet[6][4:])
+                        q2 = float(packet[7][4:])
+                        q3 = float(packet[8][4:])
+                        q4 = float(packet[9][4:])
 
-                        latitude = float(packet[9][9:])
-                        longitude = float(packet[10][10:])
-                        altitude = float(packet[11][9:])
-                        satellites = int(packet[12][12:])
+                        ax = float(packet[10][4:])
+                        ay = float(packet[11][4:])
+                        az = float(packet[12][4:])
+
+                        latitude = float(packet[13][9:])
+                        longitude = float(packet[14][10:])
+                        altitude = float(packet[15][9:])
+                        satellites = int(packet[16][12:])
                         
-                        packet[14] = packet[14].strip()
-                        channels = packet[14].split(" ")
+                        packet[18] = packet[18].strip()
+                        channels = packet[18].split(" ")
 
                         for i, c in enumerate(channels):
                             channels[i] = int(c)
 
-                        mode = int(packet[15][6:])
+                        mode = int(packet[19][6:])
 
                         last_packet_time = time.time()
 
@@ -132,6 +138,10 @@ def main():
                         "Yaw": yaw,
                         "Pitch": pitch,
                         "Roll": roll,
+                        "q1": q1,
+                        "q2": q2,
+                        "q3": q3,
+                        "q4": q4,
                         "ax": ax,
                         "ay": ay,
                         "az": az,
@@ -146,7 +156,7 @@ def main():
                     received_packets.append(save_data)
 
                     if recording:
-                        data = [rssi, lqi, t, yaw, pitch, roll, ax, ay, az, latitude, longitude, altitude, satellites]
+                        data = [rssi, lqi, t, yaw, pitch, roll, q1, q2, q3, q4, ax, ay, az, latitude, longitude, altitude, satellites]
                         data += channels
                         data += [mode]
 

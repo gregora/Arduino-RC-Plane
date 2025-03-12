@@ -40,9 +40,7 @@ unsigned int frame = 0;
 struct Packet{
   unsigned long time;
 
-  float yaw;
-  float pitch;
-  float roll;
+  imu::Quaternion quat; // orientation quaternion
 
   float ax;
   float ay;
@@ -53,7 +51,7 @@ struct Packet{
   int altitude; // gps altitude in meters
   byte satellites; // number of satellites
 
-  int channels[10];
+  int channels[7];
 
 
   /*
@@ -67,6 +65,12 @@ struct Packet{
   byte mode;
 
 };
+
+
+float yaw;
+float pitch;
+float roll;
+
 
 float ang_yaw;
 float ang_pitch;
@@ -193,11 +197,11 @@ void loop() {
     imu::Vector<3> vector1;
     vector1 = bno.getVector(Adafruit_BNO055::VECTOR_EULER);
 
-    imu::Quaternion quat = bno.getQuat();
-    vector1 = quat.toEuler();
-    p.yaw   = vector1.x() * 180 / 3.1415;
-    p.pitch = vector1.y() * 180 / 3.1415;
-    p.roll  = vector1.z() * 180 / 3.1415;
+    p.quat = bno.getQuat();
+    vector1 = p.quat.toEuler();
+    yaw   = vector1.x() * 180 / 3.1415;
+    pitch = vector1.y() * 180 / 3.1415;
+    roll  = vector1.z() * 180 / 3.1415;
 
     // read BNO055 lateral accelerations
     imu::Vector<3> vector2;
@@ -276,7 +280,7 @@ void loop() {
 
   IBus.loop();
   // read flysky receiver data
-  for(int i = 0; i < 10; i++){
+  for(int i = 0; i < 7; i++){
     p.channels[i] = IBus.readChannel(i);
   }
 
@@ -301,10 +305,10 @@ void loop() {
     float P = 2000 / 90; // max deflection at 90 deg error
     float D = 50 / (4 * 3.14); // max deflection at 4*pi rad/s angular velocity
 
-    p.channels[1] = 1500 + (p.pitch - 10) * P + ang_pitch*D;
+    p.channels[1] = 1500 + (pitch - 10) * P + ang_pitch*D;
 
-    p.channels[0] = 1500 - p.roll*P - ang_roll*D;
-    p.channels[4] = 1500 - p.roll*P - ang_roll*D;
+    p.channels[0] = 1500 - roll*P - ang_roll*D;
+    p.channels[4] = 1500 - roll*P - ang_roll*D;
 
     p.channels[3] = 1500;
 
@@ -329,10 +333,10 @@ void loop() {
     float P = 4.0 / 90         * 500; // max deflection at 90 deg error
     float D = 0.1 / (4 * 3.14) * 500; // max deflection at 4*pi rad/s angular velocity
 
-    p.channels[1] = 1500 + (p.pitch + 10) * P + ang_pitch*D;
+    p.channels[1] = 1500 + (pitch + 10) * P + ang_pitch*D;
 
-    p.channels[0] = 1500 - p.roll*P - ang_roll*D;
-    p.channels[4] = 1500 - p.roll*P - ang_roll*D;
+    p.channels[0] = 1500 - roll*P - ang_roll*D;
+    p.channels[4] = 1500 - roll*P - ang_roll*D;
 
     p.channels[3] = 1500;
   }
@@ -340,7 +344,7 @@ void loop() {
   // limit the travel of servos
   // channels have min of 1000 and max 2000
 
-  for(int i = 0; i < 10; i++){
+  for(int i = 0; i < 7; i++){
     if(p.channels[i] < 1000){
       p.channels[i] = 1000;
     }
