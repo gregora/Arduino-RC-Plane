@@ -317,17 +317,18 @@ def main():
                 avg_pos /= len(received_packets[-10000::5])
                 #print(avg_pos)
 
-                map_scale = 40075 / 360  # full width at 1 km
+                map_scale_lat = 40075 / 360  # full width at 1 km
+                map_scale_long = 40075 / 360 * np.cos(avg_pos[0] * 3.1415 / 180) # full height at 1 km
 
                 for l in line:
-                    l[0] = int(10 + 370/2 + 370 * (l[0] - avg_pos[1]) * map_scale)
-                    l[1] = int(height / 2 - 30 + 370/2 - 370 * (l[1] - avg_pos[0]) * map_scale)
+                    l[0] = int(10 + 370/2 + 370 * (l[0] - avg_pos[1]) * map_scale_long)
+                    l[1] = int(height / 2 - 30 + 370/2 - 370 * (l[1] - avg_pos[0]) * map_scale_lat)
 
                 if len(line) > 2:
                     pygame.draw.lines(screen, (255, 255, 255), False, line, 1)
 
                 # render marker
-                pygame.draw.circle(screen, (255, 0, 0), (int(10 + 370/2 + 370 * (latest_packet["Longitude"] - avg_pos[1]) * map_scale), int(height / 2 - 30 + 370/2 - 370 * (latest_packet["Latitude"] - avg_pos[0]) * map_scale)), 3)
+                pygame.draw.circle(screen, (255, 0, 0), (int(10 + 370/2 + 370 * (latest_packet["Longitude"] - avg_pos[1]) * map_scale_long), int(height / 2 - 30 + 370/2 - 370 * (latest_packet["Latitude"] - avg_pos[0]) * map_scale_lat)), 3)
                 
 
 
