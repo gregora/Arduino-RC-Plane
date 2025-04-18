@@ -78,6 +78,7 @@ float ang_roll;
 
 Packet p;
 
+float fixes = 0;
 
 
 void setup() {
@@ -199,7 +200,7 @@ void loop() {
 
     p.quat = bno.getQuat();
     vector1 = p.quat.toEuler();
-    yaw   = vector1.x() * 180 / 3.1415;
+    yaw   = vector1.x() * 180 / 3.1415; 
     pitch = vector1.y() * 180 / 3.1415;
     roll  = vector1.z() * 180 / 3.1415;
 
@@ -258,23 +259,31 @@ void loop() {
     //Serial.write(ss.read());
   }
 
-  p.latitude = gps.location.lat();
-  p.longitude = gps.location.lng();
-  p.altitude = gps.altitude.meters();
+  if (gps.location.isUpdated()){
 
-  p.satellites = gps.satellites.value();
 
-  if (DEBUG && GPS){
-    Serial.print("Latitude= "); 
-    Serial.print(p.latitude, 6);
-    Serial.print(" Longitude= "); 
-    Serial.print(p.longitude, 6);
-    Serial.print(" Altitude= ");
-    Serial.print((float) p.altitude, 0);
-    Serial.print(" Satellites= ");
-    Serial.println(p.satellites);
+    p.latitude = gps.location.lat();
+    p.longitude = gps.location.lng();
+    p.altitude = gps.altitude.meters();
+
+    p.satellites = gps.satellites.value();
+
+    if (DEBUG && GPS){
+      Serial.print("Latitude= "); 
+      Serial.print(p.latitude, 6);
+      Serial.print(" Longitude= "); 
+      Serial.print(p.longitude, 6);
+      Serial.print(" Altitude= ");
+      Serial.print((float) p.altitude, 0);
+      Serial.print(" Satellites= ");
+      Serial.println(p.satellites);
+    
+    
+      fixes++;
+      Serial.print("Fixes per second: ");
+      Serial.println(fixes / p.time * 1000);
+    }
   }
-
 
   unsigned long t3 = millis();
 
