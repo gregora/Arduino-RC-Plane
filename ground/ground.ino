@@ -7,7 +7,7 @@
 #include <ELECHOUSE_CC1101_SRC_DRV.h>
 
 
-struct Packet{
+struct Packet {
   unsigned long time;
 
   imu::Quaternion quat; // orientation quaternion
@@ -19,7 +19,8 @@ struct Packet{
   float latitude;
   float longitude;
   int altitude; // gps altitude in meters
-  byte satellites; // number of satellites
+
+  int satellites; // number of satellites
 
   int channels[7];
 
@@ -32,7 +33,7 @@ struct Packet{
 
   255 - recovery
   */
-  byte mode;
+  int mode;
 
 };
 
@@ -128,13 +129,28 @@ void setup() {
   ELECHOUSE_cc1101.setSyncMode(2);  // Combined sync-word qualifier mode. 0 = No preamble/sync. 1 = 16 sync word bits detected. 2 = 16/16 sync word bits detected. 3 = 30/32 sync word bits detected. 4 = No preamble/sync, carrier-sense above threshold. 5 = 15/16 + carrier-sense above threshold. 6 = 16/16 + carrier-sense above threshold. 7 = 30/32 + carrier-sense above threshold.
   ELECHOUSE_cc1101.setCrc(1);      // 1 = CRC calculation in TX and CRC check in RX enabled. 0 = CRC disabled for TX and RX.
 
-}
 
+
+
+  for (int i = 0x04; i <= 0x28; i++){
+    uint8_t reg = ELECHOUSE_cc1101.SpiReadReg(i);
+    Serial.print("TI_write_reg(0x");
+    Serial.print(i, HEX);
+    Serial.print(", 0x");
+    Serial.print(reg, HEX);
+    Serial.print(");\n");
+  }
+
+
+
+}
 
 void loop() {
     //Checks whether something has been received.
     //When something is received we give some time to receive the message in full.(time in millis)
     if (ELECHOUSE_cc1101.CheckRxFifo(8)){
+      
+     
       if (ELECHOUSE_cc1101.CheckCRC()){    //CRC Check. If "setCrc(false)" crc returns always OK!
         
         Serial.println("GND PACKET");

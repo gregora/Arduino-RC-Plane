@@ -37,7 +37,7 @@ bool cc1101_status = false;
 
 unsigned int frame = 0;
 
-struct Packet{
+struct Packet {
   unsigned long time;
 
   imu::Quaternion quat; // orientation quaternion
@@ -49,7 +49,8 @@ struct Packet{
   float latitude;
   float longitude;
   int altitude; // gps altitude in meters
-  byte satellites; // number of satellites
+
+  int satellites; // number of satellites
 
   int channels[7];
 
@@ -62,9 +63,10 @@ struct Packet{
 
   255 - recovery
   */
-  byte mode;
+  int mode;
 
 };
+
 
 
 float yaw;
