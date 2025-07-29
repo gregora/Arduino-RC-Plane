@@ -13,9 +13,13 @@ data = pd.read_csv(file)
 # Plot roll, pitch, and yaw on one graph
 plt.subplot(2, 1, 1)
 
-plt.plot(data["Time"], data["Roll"], label="Roll")
-plt.plot(data["Time"], data["Pitch"], label="Pitch")
-plt.plot(data["Time"], data["Yaw"], label="Yaw")
+#plt.plot(data["Time"], data["Roll"], label="Roll")
+#plt.plot(data["Time"], data["Pitch"], label="Pitch")
+#plt.plot(data["Time"], data["Yaw"], label="Yaw")
+
+plt.plot(data["Time"], data["ax"], label="ax")
+plt.plot(data["Time"], data["ay"], label="ay")
+plt.plot(data["Time"], data["az"], label="az")
 
 plt.legend()
 

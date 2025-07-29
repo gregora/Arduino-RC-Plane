@@ -44,6 +44,28 @@ float roll;
 
 Packet p;
 
+// Seems to be the same as Adafruit's implementation
+void quat2ZYX(imu::Quaternion q, float &yaw, float &pitch, float &roll) {
+  double sinr_cosp = 2 * (q.w() * q.x() + q.y() * q.z());
+  double cosr_cosp = 1 - 2 * (q.x() * q.x() + q.y() * q.y());
+  roll = atan2(sinr_cosp, cosr_cosp);
+
+  // pitch (y-axis rotation)
+  double sinp = sqrt(1 + 2 * (q.w() * q.y() - q.x() * q.z()));
+  double cosp = sqrt(1 - 2 * (q.w() * q.y() - q.x() * q.z()));
+  pitch = 2 * atan2(sinp, cosp) - M_PI / 2;
+
+  // yaw (z-axis rotation)
+  double siny_cosp = 2 * (q.w() * q.z() + q.x() * q.y());
+  double cosy_cosp = 1 - 2 * (q.y() * q.y() + q.z() * q.z());
+  yaw = atan2(siny_cosp, cosy_cosp);
+
+  // Convert radians to degrees
+  yaw   *= 180 / 3.1415;
+  pitch *= 180 / 3.1415;
+  roll  *= 180 / 3.1415;
+}
+
 void printPacket(Packet p){
 
   imu::Vector<3> euler;
@@ -52,6 +74,8 @@ void printPacket(Packet p){
   yaw   = euler.x() * 180 / 3.1415;
   pitch = euler.y() * 180 / 3.1415;
   roll  = euler.z() * 180 / 3.1415;
+
+  quat2ZYX(p.quat, yaw, pitch, roll);
 
   Serial.print("Time: ");
   Serial.println(p.time);
