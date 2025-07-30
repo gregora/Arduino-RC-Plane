@@ -276,7 +276,7 @@ def main():
             # scale the marker
             marker = pygame.transform.scale(marker_image, (200, 16))
             # rotate the marker   
-            marker = pygame.transform.rotate(marker, latest_packet["Roll"])
+            marker = pygame.transform.rotate(marker, - latest_packet["Roll"])
             marker_rect = marker.get_rect()
             screen.blit(marker, (width / 2 - marker_rect.width/2, height / 2 + 200 - 50 - marker_rect.height/2))
 

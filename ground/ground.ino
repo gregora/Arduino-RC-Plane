@@ -75,7 +75,8 @@ void printPacket(Packet p){
   pitch = euler.y() * 180 / 3.1415;
   roll  = euler.z() * 180 / 3.1415;
 
-  quat2ZYX(p.quat, yaw, pitch, roll);
+  // Works the same as .toEuler()
+  //quat2ZYX(p.quat, yaw, pitch, roll);
 
   Serial.print("Time: ");
   Serial.println(p.time);
