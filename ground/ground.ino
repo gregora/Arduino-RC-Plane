@@ -167,10 +167,20 @@ void setup() {
   }
 
 
+    int i = 0x3E;
+    uint8_t reg = ELECHOUSE_cc1101.SpiReadReg(i);
+    Serial.print("TI_write_reg(0x");
+    Serial.print(i, HEX);
+    Serial.print(", 0x");
+    Serial.print(reg, HEX);
+    Serial.print(");\n");
+
+
 
 }
 
 void loop() {
+    //return;
     //Checks whether something has been received.
     //When something is received we give some time to receive the message in full.(time in millis)
     if (ELECHOUSE_cc1101.CheckRxFifo(8)){
