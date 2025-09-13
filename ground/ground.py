@@ -249,6 +249,8 @@ def main():
                 text = font_middle.render("Take-off mode", True, (17, 91, 212))
             elif latest_packet["Mode"] == 2:
                 text = font_middle.render("Fly-by-wire mode", True, (8, 138, 47))
+            elif latest_packet["Mode"] == 3:
+                text = font_middle.render("Automatic mode", True, (255, 165, 0))
             elif latest_packet["Mode"] == 255:
                 text = font_middle.render("Recovery mode", True, (140, 0, 14))
 
